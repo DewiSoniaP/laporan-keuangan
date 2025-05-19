@@ -1,83 +1,106 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Laporan Keuangan</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
-        .sidebar {
-            width: 220px;
-            background-color:rgb(74, 116, 201);
-            padding: 20px;
-            height: 100vh;
-        }
-        .sidebar h4 {
-            font-size: 16px;
-            font-weight: bold;
-        }
-        .sidebar a {
-            display: block;
-            margin-bottom: 10px;
-            padding: 10px;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-        .sidebar a:hover,
-        .sidebar a.active {
-            background-color:rgb(110, 168, 254);
-            color: white;
-            font-weight: bold;
-        }
-        .topbar {
-            background-color: white;
-            padding: 10px 20px;
-            border-bottom: 1px solid #ccc;
-        }
-        .content {
-            padding: 20px;
-            background-color: #f8f9fa;
-            min-height: 100vh;
-        }
-        .floating-button {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 1000;
-        }
-        .card-blue {
-            background-color: #007bff;
-            color: white;
-            border-radius: 5px;
-        }
-        .card-red {
-            background-color: #dc3545;
-            color: white;
-            border-radius: 5px;
-        }
-        .btn-yellow {
-            background-color: #ffc107;
-            color: #000;
-        }
-        .row.no-gutters {
-            margin-right: 0;
-            margin-left: 0;
-        }
-        .row.no-gutters > [class^="col-"],
-        .row.no-gutters > [class*=" col-"] {
-            padding-right: 0;
-            padding-left: 0;
-        }
-    </style>
+        
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5;
+}
+
+.sidebar {
+    width: 100%;
+    background: linear-gradient(to bottom, #2f4cdd, #567df4);
+    padding: 20px;
+    height: 100vh;
+    color: white;
+    position: sticky;
+    top: 0;
+}
+
+.sidebar h4 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 30px;
+}
+
+.sidebar a {
+    display: block;
+    margin-bottom: 10px;
+    padding: 10px 15px;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: background 0.3s ease;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    font-weight: bold;
+}
+
+.topbar {
+    background-color: #fff;
+    padding: 15px 30px;
+    border-bottom: 1px solid #ddd;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+}
+
+.content {
+    padding: 30px;
+}
+
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.card-blue {
+    background-color: #007bff;
+    color: white;
+}
+
+.card-red {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-yellow {
+    background-color: #ffc107;
+    color: black;
+    border: none;
+}
+
+.alert {
+    border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        position: static;
+        width: 100%;
+        height: auto;
+        text-align: center;
+    }
+    .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+</style>
 </head>
 <body>
 
-<div class="container-fluid">
+<div class="container-fluid px-0">
     <div class="row no-gutters">
 
         <!-- Sidebar -->
