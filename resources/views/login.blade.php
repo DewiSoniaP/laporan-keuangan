@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             box-sizing: border-box;
@@ -10,123 +11,143 @@
 
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #a8c9ff;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(to right, #e3f2fd, #bbdefb);
             display: flex;
+            justify-content: center;
+            align-items: center;
             height: 100vh;
         }
 
-        .left {
-            flex: 1;
+        .container {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 2em;
-            font-weight: bold;
-            color: #0656d4;
+            width: 900px;
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
 
-        .right {
-            flex: 1;
+        .left-panel {
+            flex: 1.2;
+            background: url('{{ asset("images/header-login.webp") }}') no-repeat center;
+            background-size: cover;
+            min-height: 450px;
+        }
+
+        .right-panel {
+            flex: 0.8;
+            padding: 40px;
             display: flex;
+            flex-direction: column;
             justify-content: center;
-            align-items: center;
         }
 
-        .login-box {
-            background: white;
-            padding: 30px;
-            width: 300px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            position: relative;
+        .right-panel h2 {
+            margin-bottom: 20px;
+            font-size: 26px;
+            color: #333;
+            font-weight: 600;
         }
 
-        .login-box img {
+        .form-control {
             width: 100%;
-            height: 100px;
-            object-fit: cover;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-            margin: -30px -30px 20px;
+            padding: 12px 16px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 14px;
         }
 
-        .login-box h2 {
+        .btn-primary {
+            background-color: #1976d2;
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            font-size: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #1565c0;
+        }
+
+        .link {
+            text-align: right;
+            font-size: 0.9em;
             margin-bottom: 20px;
         }
 
-        input[type="email"],
-        input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 20px;
-            border: 1px solid #ccc;
-        }
-
-        .login-box a {
-            font-size: 0.9em;
-            color: #0d6efd;
-            display: block;
-            text-align: right;
-            margin-bottom: 15px;
+        .link a {
+            color: #1976d2;
             text-decoration: none;
         }
 
-        .login-box button {
-            background-color: #0d6efd;
-            border: none;
-            color: white;
-            padding: 10px;
-            width: 100%;
-            border-radius: 20px;
-            font-size: 1em;
-            cursor: pointer;
+        .link a:hover {
+            text-decoration: underline;
         }
 
         .error-message {
             color: red;
             margin-bottom: 10px;
+            font-size: 0.9em;
         }
 
         .success-message {
             color: green;
             margin-bottom: 10px;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                width: 90%;
+            }
+
+            .left-panel {
+                min-height: 200px;
+            }
+
+            .right-panel {
+                padding: 30px 20px;
+            }
         }
     </style>
 </head>
 <body>
 
-    <div class="left">
-        Hallo, Admin!
-    </div>
+<div class="container">
+    <div class="left-panel"></div>
+    <div class="right-panel">
+        <h2>Selamat Datang, Admin</h2>
 
-    <div class="right">
-        <div class="login-box">
-            <img src="{{ asset('images/header-login.jpg') }}" alt="Header Image"> {{-- Gambar di atas form --}}
-            <h2>Form Login</h2>
+        {{-- Tampilkan error jika ada --}}
+        @if(session('error'))
+            <div class="error-message">{{ session('error') }}</div>
+        @endif
 
-            {{-- Tampilkan error jika ada --}}
-            @if(session('error'))
-                <div class="error-message">{{ session('error') }}</div>
-            @endif
+        {{-- Tampilkan pesan sukses jika ada --}}
+        @if(session('success'))
+            <div class="success-message">{{ session('success') }}</div>
+        @endif
 
-            {{-- Tampilkan pesan sukses jika ada --}}
-            @if(session('success'))
-                <div class="success-message">{{ session('success') }}</div>
-            @endif
+        <form action="{{ route('login.post') }}" method="POST">
+            @csrf
+            <input type="email" name="email" class="form-control" placeholder="Masukkan Email" required>
+            <input type="password" name="password" class="form-control" placeholder="Masukkan Password" required>
 
-            {{-- Form login --}}
-            <form action="{{ route('login.post') }}" method="POST">
-                @csrf
-                <input type="email" name="email" placeholder="Masukkan Email" required>
-                <input type="password" name="password" placeholder="Masukkan Password" required>
+            <div class="link">
                 <a href="{{ route('password.request') }}">Lupa Password?</a>
-                <button type="submit">Login</button>
-            </form>
-        </div>
+            </div>
+
+            <button type="submit" class="btn-primary">Login</button>
+        </form>
     </div>
+</div>
 
 </body>
 </html>
