@@ -1,5 +1,6 @@
 <?php
 
+// app/Models/Pendapatan.php
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,10 +10,9 @@ class Pendapatan extends Model
 {
     use HasFactory;
 
-    protected $table = 'pendapatan';
-    protected $primaryKey = 'idPendapatan';
-    public $incrementing = true;              
-    protected $keyType = 'int';                
+    protected $table = 'pendapatan'; // nama tabel di DB
+
+    protected $primaryKey = 'idPendapatan'; // custom primary key
 
     protected $fillable = [
         'tanggal',
@@ -23,11 +23,7 @@ class Pendapatan extends Model
         'diagnose',
         'jenisKunjungan',
         'jasa',
-        'is_verified', // TAMBAHKAN agar bisa diisi lewat create/update
-    ];
-
-    protected $casts = [
-        'tanggal' => 'date',
-        'is_verified' => 'boolean', // PENTING agar bisa diproses sebagai true/false
+        'is_verified'
     ];
 }
+

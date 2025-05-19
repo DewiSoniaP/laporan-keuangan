@@ -61,14 +61,7 @@ Route::get('/cetak/pdf', [CetakController::class, 'exportPDF'])->name('cetak.pdf
 // Pendapatan
 // ===========================
 Route::get('/pendapatan', [PendapatanController::class, 'index'])->name('pendapatan.index');
-Route::get('/pendapatan/input', [PendapatanController::class, 'inputForm'])->name('pendapatan.input');
-Route::get('/pendapatan/form', [PendapatanController::class, 'form'])->name('pendapatan.form');
-Route::post('/pendapatan/store', [PendapatanController::class, 'store'])->name('pendapatan.store');
-Route::get('/pendapatan/show', [PendapatanController::class, 'showData'])->name('pendapatan.show');
-Route::delete('/pendapatan/delete/{id}', [PendapatanController::class, 'destroy'])->name('pendapatan.destroy');  
-Route::get('/pendapatan/edit/{id}', [PendapatanController::class, 'edit'])->name('pendapatan.edit'); 
-Route::put('/pendapatan/update/{id}', [PendapatanController::class, 'update'])->name('pendapatan.update');
-Route::post('/pendapatan/verifikasi', [PendapatanController::class, 'verifikasi'])->name('pendapatan.verifikasi');
+Route::resource('pendapatan', PendapatanController::class);
 
 // ===========================
 // Pengeluaran

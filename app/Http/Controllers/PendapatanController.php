@@ -9,136 +9,43 @@ class PendapatanController extends Controller
 {
     public function index(Request $request)
     {
-        $bulan = $request->query('bulan');
-        $tahun = $request->query('tahun');
-
-        return view('pendapatan', compact('bulan', 'tahun'));
-    }
-
-    public function inputForm(Request $request)
-    {
-        $tanggal = date('Y-m-d');
-        return view('pendapatan_form', compact('tanggal'));
-    }
-
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'tanggal' => 'required|date',
-            'nama_pasien' => 'required|string|max:255',
-            'usia' => 'required|string|max:10',
-            'nama_orangtua' => 'nullable|string|max:255',
-            'alamat' => 'required|string',
-            'diagnose' => 'required|string|max:255',
-            'jenis_kunjungan' => 'required|string|max:255',
-            'jasa' => 'required|string|max:100',
-        ]);
-
-        try {
-            $pendapatan = new Pendapatan();
-            $pendapatan->tanggal = $request->tanggal;
-            $pendapatan->namaPasien = $request->nama_pasien;
-            $pendapatan->usia = $request->usia;
-            $pendapatan->namaKeluarga = $request->nama_orangtua;
-            $pendapatan->alamat = $request->alamat;
-            $pendapatan->diagnose = $request->diagnose;
-            $pendapatan->jenisKunjungan = $request->jenis_kunjungan;
-            $pendapatan->jasa = $request->jasa;
-            $pendapatan->save();
-
-            return response()->json(['success' => true]);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
-        }
-    }
-
-    public function showData(Request $request)
-    {
-        $bulan = str_pad($request->query('bulan'), 2, '0', STR_PAD_LEFT);
-        $tahun = $request->query('tahun');
         $tanggal = $request->query('tanggal');
+        $status = $request->query('status');
 
-        if (!$bulan || !$tahun) {
-            return redirect()->route('pendapatan.index')->with('error', 'Bulan dan tahun wajib dipilih!');
-        }
-
-        $query = Pendapatan::whereMonth('tanggal', $bulan)
-            ->whereYear('tanggal', $tahun);
+        $query = Pendapatan::query();
 
         if ($tanggal) {
             $query->whereDate('tanggal', $tanggal);
         }
 
-        $pendapatan = $query->get();
+        if ($status === 'verified') {
+            $query->where('is_verified', true);
+        } elseif ($status === 'unverified') {
+            $query->where('is_verified', false);
+        }
 
-        return view('pendapatan_data', compact('bulan', 'tahun', 'tanggal', 'pendapatan'));
+        $pendapatan = $query->orderBy('tanggal', 'desc')->get();
+
+        return view('pendapatan', compact('pendapatan', 'tanggal', 'status'));
     }
 
+    public function store(Request $request)
+    {
+        Pendapatan::create($request->all());
+        return redirect()->route('pendapatan.index')->with('success', 'Data berhasil ditambahkan.');
+    }
+    
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'nama_pasien' => 'required|string|max:255',
-            'diagnose' => 'required|string|max:255',
-            'tanggal' => 'required|date',
-            'jasa' => 'required|numeric|min:0',
-        ]);
-
-        $pendapatan = Pendapatan::findOrFail($id);
-        $pendapatan->namaPasien = $request->nama_pasien;
-        $pendapatan->diagnose = $request->diagnose;
-        $pendapatan->tanggal = $request->tanggal;
-        $pendapatan->jasa = $request->jasa;
-
-        // Reset verifikasi jika data diubah
-        $pendapatan->is_verified = false;
-
-        $pendapatan->save();
-
-        return response()->json([
-            'success' => true,
-            'updatedData' => $pendapatan
-        ]);
+        $data = Pendapatan::findOrFail($id);
+        $data->update($request->all());
+        return redirect()->route('pendapatan.index')->with('success', 'Data berhasil diperbarui.');
     }
-
-    public function destroy(Request $request, $id)
+    
+    public function destroy($id)
     {
-        try {
-            $pendapatan = Pendapatan::findOrFail($id);
-            $pendapatan->delete();
-
-            if ($request->ajax()) {
-                return response()->json(['success' => true]);
-            }
-
-            return redirect()->route('pendapatan.show', [
-                'bulan' => date('m', strtotime($request->tanggal)),
-                'tahun' => date('Y', strtotime($request->tanggal))
-            ])->with('success', 'Data pendapatan berhasil dihapus!');
-        } catch (\Exception $e) {
-            if ($request->ajax()) {
-                return response()->json(['success' => false, 'message' => $e->getMessage()]);
-            }
-            return back()->with('error', 'Gagal menghapus data.');
-        }
+        Pendapatan::findOrFail($id)->delete();
+        return redirect()->route('pendapatan.index')->with('success', 'Data berhasil dihapus.');
     }
-
-    public function verifikasi(Request $request)
-    {
-        $request->validate([
-            'id' => 'required|exists:pendapatan,idPendapatan',
-            'bulan' => 'required',
-            'tahun' => 'required',
-            'tanggal' => 'required|date',
-        ]);
-
-        $pendapatan = Pendapatan::findOrFail($request->id);
-        $pendapatan->is_verified = true;
-        $pendapatan->save();
-
-        return redirect()->route('pendapatan.show', [
-            'bulan' => $request->bulan,
-            'tahun' => $request->tahun,
-            'tanggal' => $request->tanggal,
-        ])->with('success', 'Data berhasil diverifikasi!');
-    }
+    
 }
