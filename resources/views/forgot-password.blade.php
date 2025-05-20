@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Lupa Password</title>
     <style>
@@ -14,18 +15,26 @@
 
         .container {
             width: 320px;
-            padding: 25px;
+            padding: 20px;
             background-color: white;
             border: 1px solid #ccc;
             border-radius: 10px;
             text-align: center;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
         }
 
-        input, button {
+        form {
             width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        input,
+        button {
             padding: 10px;
-            margin: 10px 0;
             border-radius: 20px;
             border: 1px solid #ccc;
         }
@@ -47,6 +56,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h2>Lupa Password</h2>
@@ -66,4 +76,5 @@
         </form>
     </div>
 </body>
+
 </html>
