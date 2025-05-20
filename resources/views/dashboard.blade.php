@@ -117,7 +117,7 @@ body {
         <!-- Content -->
         <div class="col-md-10">
             <div class="topbar d-flex justify-content-between align-items-center">
-                <div><strong>Hallo, Admin</strong></div>
+                <div><strong>Hallo, {{ Auth::user()->name }}</strong></div>
                 <div>
                     <a href="{{ route('logout') }}" class="btn btn-outline-primary btn-sm"
                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">

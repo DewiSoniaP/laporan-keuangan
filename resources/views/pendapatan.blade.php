@@ -85,7 +85,7 @@
             <!-- Content -->
             <div class="col-md-10 p-0">
                 <div class="topbar d-flex justify-content-between align-items-center">
-                    <div><strong>Hallo, Admin</strong></div>
+                    <div><strong>Hallo, {{ Auth::user()->name }}</strong></div>
                     <div>
                         <a href="{{ route('logout') }}" class="btn btn-outline-primary btn-sm"
                             onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
@@ -174,8 +174,6 @@
                                             <!-- Tombol Edit -->
                                             <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal"
                                                 data-bs-target="#modalEdit{{ $item->idPendapatan }}">Edit</button>
-
-                                            <!-- Tombol Hapus -->
                                             <!-- Tombol Hapus -->
                                             <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal"
                                                 data-bs-target="#modalDelete{{ $item->idPendapatan }}">
@@ -204,7 +202,7 @@
     @foreach ($pendapatan as $item)
         {{-- modal edit --}}
         <div class="modal fade" id="modalEdit{{ $item->idPendapatan }}" tabindex="-1">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-dialog-centered">
                 <form action="{{ route('pendapatan.update', $item->idPendapatan) }}" method="POST">
                     @csrf @method('PUT')
                     <div class="modal-content">
@@ -276,10 +274,9 @@
             </div>
         </div>
         {{-- modal delete --}}
-        <!-- Modal Konfirmasi Hapus -->
         <div class="modal fade" id="modalDelete{{ $item->idPendapatan }}" tabindex="-1"
             aria-labelledby="modalDeleteLabel{{ $item->idPendapatan }}" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content border-danger">
                     <div class="modal-header bg-danger text-white">
                         <h5 class="modal-title" id="modalDeleteLabel{{ $item->idPendapatan }}">Konfirmasi Hapus</h5>
@@ -305,7 +302,7 @@
 
     {{-- Modal input pendapatan --}}
     <div class="modal fade" id="modalCreate" tabindex="-1" aria-labelledby="modalCreateLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <form action="{{ route('pendapatan.store') }}" method="POST">
                 @csrf
                 <div class="modal-content">

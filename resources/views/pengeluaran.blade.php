@@ -1,78 +1,92 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <title>Halaman Pengeluaran</title>
+    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
         }
+
         .sidebar {
-            width: 220px;
-            background-color:rgb(74, 116, 201);
+            width: 100%;
+            background: linear-gradient(to bottom, #2f4cdd, #567df4);
             padding: 20px;
             height: 100vh;
+            color: white;
+            position: sticky;
+            top: 0;
         }
+
         .sidebar h4 {
-            font-size: 16px;
-            font-weight: bold;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 30px;
         }
+
         .sidebar a {
             display: block;
             margin-bottom: 10px;
-            padding: 10px;
+            padding: 10px 15px;
             color: white;
             text-decoration: none;
-            border-radius: 5px;
-            font-size: 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: background 0.3s ease;
         }
+
         .sidebar a:hover,
         .sidebar a.active {
-            background-color:rgb(110, 168, 254);
-            color: white;
+            background-color: rgba(255, 255, 255, 0.2);
             font-weight: bold;
         }
+
         .topbar {
-            background-color: white;
-            padding: 10px 20px;
-            border-bottom: 1px solid #ccc;
+            background-color: #fff;
+            padding: 15px 30px;
+            border-bottom: 1px solid #ddd;
+            position: sticky;
+            top: 0;
+            z-index: 999;
         }
+
         .content {
-            padding: 20px;
-            background-color: #f8f9fa;
-            min-height: 100vh;
-        }
-        .floating-button {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 1000;
+            padding: 30px;
         }
     </style>
 </head>
+
 <body>
-    <div class="container-fluid">
-        <div class="row no-gutters">
+    <div class="container-fluid px-0">
+        <div class="row m-0">
             <!-- Sidebar -->
-            <div class="col-md-2">
+            <div class="col-md-2 p-0">
                 <div class="sidebar">
                     <h4>Laporan Keuangan</h4>
-                    <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">Dashboard</a>
-                    <a href="{{ route('pendapatan.index') }}" class="{{ request()->routeIs('pendapatan.index') ? 'active' : '' }}">Pendapatan</a>
-                    <a href="{{ route('pengeluaran.index') }}" class="{{ request()->routeIs('pengeluaran.index') ? 'active' : '' }}">Pengeluaran</a>
-                    <a href="{{ route('datakaryawan.index') }}" class="{{ request()->routeIs('datakaryawan.index') ? 'active' : '' }}">Data Karyawan</a>
+                    <a href="{{ route('dashboard') }}"
+                        class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">Dashboard</a>
+                    <a href="{{ route('pendapatan.index') }}"
+                        class="{{ request()->routeIs('pendapatan.index') ? 'active' : '' }}">Pendapatan</a>
+                    <a href="{{ route('pengeluaran.index') }}"
+                        class="{{ request()->routeIs('pengeluaran.index') ? 'active' : '' }}">Pengeluaran</a>
+                    <a href="{{ route('datakaryawan.index') }}"
+                        class="{{ request()->routeIs('datakaryawan.index') ? 'active' : '' }}">Data Karyawan</a>
                 </div>
             </div>
 
             <!-- Content -->
-            <div class="col-md-10">
+            <div class="col-md-10 p-0">
                 <div class="topbar d-flex justify-content-between align-items-center">
-                    <div><strong>Hallo, Admin</strong></div>
+                    <div><strong>Hallo, {{ Auth::user()->name }}</strong></div>
                     <div>
                         <a href="{{ route('logout') }}" class="btn btn-outline-primary btn-sm"
-                           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                             Logout
                         </a>
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
@@ -83,42 +97,220 @@
 
                 <div class="content">
                     <h4>Data Pengeluaran</h4>
-                    <p>Silakan pilih bulan dan tahun untuk melihat data pengeluaran atau menambah data baru.</p>
 
-                    {{-- Form Filter Bulan dan Tahun --}}
-                    <form method="GET" action="{{ route('pengeluaran.show') }}" class="row g-3 align-items-center mb-4">
-                        <div class="col-auto">
-                            <label for="bulan">Pilih Bulan:</label>
-                            <select name="bulan" id="bulan" class="form-control" required>
-                                <option value="">-- Pilih Bulan --</option>
-                                @for ($i = 1; $i <= 12; $i++)
-                                    <option value="{{ $i }}">{{ DateTime::createFromFormat('!m', $i)->format('F') }}</option>
-                                @endfor
-                            </select>
+                    {{-- Form Filter Tanggal dan Status --}}
+                    <form method="GET" action="{{ route('pengeluaran.index') }}" class="row align-items-end mb-4">
+                        <div class="col-3">
+                            <label for="tanggal">Filter Tanggal:</label>
+                            <input type="date" name="tanggal" id="tanggal" class="form-control"
+                                value="{{ request('tanggal') }}">
                         </div>
 
-                        <div class="col-auto">
-                            <label for="tahun">Pilih Tahun:</label>
-                            <select name="tahun" id="tahun" class="form-control" required>
-                                <option value="">-- Pilih Tahun --</option>
-                                @for ($y = date('Y') - 5; $y <= date('Y') + 5; $y++)
-                                    <option value="{{ $y }}">{{ $y }}</option>
-                                @endfor
-                            </select>
+                        <div class="col-3">
+                            <label for="status">Status Verifikasi:</label>
+                            <div class="px-2 form-control">
+                                <select name="status" id="status" class="w-100 border-0" style="outline: none">
+                                    <option value="">-- Semua --</option>
+                                    <option value="verified" {{ request('status') == 'verified' ? 'selected' : '' }}>
+                                        Terverifikasi</option>
+                                    <option value="unverified"
+                                        {{ request('status') == 'unverified' ? 'selected' : '' }}>
+                                        Belum Terverifikasi</option>
+                                </select>
+                            </div>
                         </div>
 
-                        <div class="col-auto mt-4">
-                            <button type="submit" class="btn btn-primary">Proses</button>
+                        <div class="col-6 d-flex justify-content-between mt-4">
+                            <div class="d-flex gap-3">
+                                <button type="submit" class="btn btn-primary">Filter</button>
+                                <a href="{{ route('pengeluaran.index') }}" class="btn btn-danger">Reset</a>
+                            </div>
+                            <!-- Tombol untuk buka modal -->
+                            <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                                data-bs-target="#modalCreate">Input pengeluaran</button>
                         </div>
                     </form>
 
-                    <!-- Tombol Input Pengeluaran -->
-                    <a href="{{ route('pengeluaran.input') }}" class="btn btn-success floating-button">
-                        Input Pengeluaran
-                    </a>
+                    <div class="table-responsive mt-4">
+                        <table class="table table-bordered table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>No</th>
+                                    <th>Tanggal</th>
+                                    <th class="text-nowrap">Keperluan Pengeluaran</th>
+                                    <th class="text-nowrap">Jumlah Pengeluaran</th>
+                                    <th>Keterangan</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($pengeluaran as $item)
+                                    <tr>
+                                        <td class="text-nowrap">{{ $loop->iteration }}</td>
+                                        <td class="text-nowrap">
+                                            {{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d M Y') }}</td>
+                                        <td class="text-nowrap">{{ $item->keperluanPengeluaran }}</td>
+                                        <td class="text-nowrap">{{ $item->jumlahPengeluaran }}</td>
+                                        <td class="text-nowrap">{{ $item->keterangan }}</td>
+                                        <td class="text-nowrap text-white">
+                                            @if ($item->is_verified)
+                                                <span class="badge bg-success">Terverifikasi</span>
+                                            @else
+                                                <span class="badge bg-warning">Belum Diverifikasi</span>
+                                            @endif
+                                        </td>
+                                        <td class="text-nowrap">
+                                            <!-- Tombol Edit -->
+                                            <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal"
+                                                data-bs-target="#modalEdit{{ $item->idPengeluaran }}">Edit</button>
+                                            <!-- Tombol Hapus -->
+                                            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal"
+                                                data-bs-target="#modalDelete{{ $item->idPengeluaran }}">
+                                                Hapus
+                                            </button>
+                                        </td>
+
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="7" class="text-center">Belum ada data pengeluaran.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    @foreach ($pengeluaran as $item)
+        {{-- modal edit --}}
+        <div class="modal fade" id="modalEdit{{ $item->idPengeluaran }}" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <form action="{{ route('pengeluaran.update', $item->idPengeluaran) }}" method="POST">
+                    @csrf @method('PUT')
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Edit Pengeluaran</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+
+                        <div class="modal-body row g-3">
+                            <!-- isi input form di sini -->
+                            <div class="col-md-6">
+                                <label>Tanggal</label>
+                                <input type="date" name="tanggal" value="{{ $item->tanggal }}" class="form-control"
+                                    required>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Keperluan Pengeluaran</label>
+                                <input type="text" name="keperluanPengeluaran" class="form-control"
+                                    placeholder="masukan Keperluan Pengeluaran"
+                                    value="{{ $item->keperluanPengeluaran }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Jumlah Pengeluaran</label>
+                                <input type="number" name="jumlahPengeluaran" class="form-control" placeholder="0"
+                                    value="{{ $item->jumlahPengeluaran }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Status Verifikasi</label>
+                                <div class="form-control">
+                                    <select name="is_verified" class="w-100 border-0" required style="outline: none">
+                                        <option value="1">Terverifikasi</option>
+                                        <option value="0">Belum Terverifikasi</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="">
+                                <label>keterangan</label>
+                                <textarea name="keterangan" class="form-control" placeholder="Masukkan keterangan" required>{{ $item->keterangan }}</textarea>
+
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-primary">Update</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {{-- modal delete --}}
+        <div class="modal fade" id="modalDelete{{ $item->idPengeluaran }}" tabindex="-1"
+            aria-labelledby="modalDeleteLabel{{ $item->idPengeluaran }}" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-danger">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title" id="modalDeleteLabel{{ $item->idPengeluaran }}">Konfirmasi Hapus</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Tutup"></button>
+                    </div>
+                    <div class="modal-body">
+                        Apakah Anda yakin ingin menghapus data pengeluaran                         <strong>{{ $item->keperluanPengeluaran }}</strong>?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <form action="{{ route('pengeluaran.destroy', $item->idPengeluaran) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger">Ya, Hapus</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endforeach
+
+    {{-- Modal input pengeluaran --}}
+    <div class="modal fade" id="modalCreate" tabindex="-1" aria-labelledby="modalCreateLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <form action="{{ route('pengeluaran.store') }}" method="POST">
+                @csrf
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalCreateLabel">Tambah Pengeluaran</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body row g-3">
+                        <!-- isi input form di sini -->
+                        <div class="col-md-6">
+                            <label>Tanggal</label>
+                            <input type="date" name="tanggal" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Keperluan Pengeluaran</label>
+                            <input type="text" name="keperluanPengeluaran" class="form-control"
+                                placeholder="masukan Keperluan Pengeluaran" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Jumlah Pengeluaran</label>
+                            <input type="number" name="jumlahPengeluaran" class="form-control" placeholder="0"
+                                required>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Status Verifikasi</label>
+                            <div class="form-control">
+                                <select name="is_verified" class="w-100 border-0" required style="outline: none">
+                                    <option value="1">Terverifikasi</option>
+                                    <option value="0">Belum Terverifikasi</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="">
+                            <label>keterangan</label>
+                            <textarea type="text" name="keterangan" class="form-control" placeholder="masukan keterangan" required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 </body>
+
 </html>

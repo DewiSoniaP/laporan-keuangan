@@ -33,7 +33,6 @@ Route::post('/login', function (Request $request) {
 // ===========================
 // Lupa Password
 // ===========================
-
 Route::get('/forgot-password', function () {
     return view('forgot-password');
 })->name('password.request');
@@ -67,14 +66,7 @@ Route::resource('pendapatan', PendapatanController::class);
 // Pengeluaran
 // ===========================
 Route::get('/pengeluaran', [PengeluaranController::class, 'index'])->name('pengeluaran.index');
-Route::get('/pengeluaran/input', [PengeluaranController::class, 'inputForm'])->name('pengeluaran.input');
-Route::get('/pengeluaran/form', [PengeluaranController::class, 'form'])->name('pengeluaran.form');
-Route::post('/pengeluaran/store', [PengeluaranController::class, 'store'])->name('pengeluaran.store');
-Route::get('/pengeluaran/show', [PengeluaranController::class, 'showData'])->name('pengeluaran.show');
-Route::delete('/pengeluaran/delete/{id}', [PengeluaranController::class, 'destroy'])->name('pengeluaran.destroy');  
-Route::get('/pengeluaran/edit/{id}', [PengeluaranController::class, 'edit'])->name('pengeluaran.edit'); 
-Route::put('/pengeluaran/update/{id}', [PengeluaranController::class, 'update'])->name('pengeluaran.update');
-Route::post('/pengeluaran/verifikasi', [PengeluaranController::class, 'verifikasi'])->name('pengeluaran.verifikasi');
+Route::resource('pengeluaran', PengeluaranController::class);
 
 // ===========================
 // Data Karyawan
