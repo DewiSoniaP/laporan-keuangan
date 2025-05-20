@@ -1,66 +1,98 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
     <meta charset="UTF-8">
+    <title>Laporan Keuangan</title>
     <style>
-        body { font-family: DejaVu Sans, sans-serif; font-size: 12px; }
-        h2 { text-align: center; margin-bottom: 0; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #000; padding: 6px; text-align: center; }
-        th { background-color: #f0f0f0; }
+        @page {
+            margin: 50px 30px;
+        }
+        body {
+            font-family: sans-serif;
+            font-size: 12px;
+            position: relative;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 6px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tfoot td {
+            font-weight: bold;
+        }
+        footer {
+            position: fixed;
+            bottom: -30px;
+            left: 0;
+            right: 0;
+            height: 30px;
+            font-size: 10px;
+            color: #444;
+        }
+        .footer-left {
+            float: left;
+        }
+        .footer-right {
+            float: right;
+        }
     </style>
 </head>
 <body>
-    <h2>Laporan Keuangan Bulanan - {{ \Carbon\Carbon::create()->month($bulan)->translatedFormat('F') }} {{ $tahun }}</h2>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Tanggal</th>
-                <th>Keterangan</th>
-                <th>Debit (Rp)</th>
-                <th>Kredit (Rp)</th>
-            </tr>
-        </thead>
-        <tbody>
-            @php
-                $totalDebit = 0;
-                $totalKredit = 0;
-            @endphp
+<header>
+    <h2>Laporan Keuangan Bulanan - {{ $namaBulan }} {{ $tahun }}</h2>
+</header>
 
-            @foreach($pendapatan as $data)
+<table>
+    <thead>
+        <tr>
+            <th>Tanggal</th>
+            <th>Keterangan</th>
+            <th>Debit (Rp)</th>
+            <th>Kredit (Rp)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach($semuaData as $data)
             <tr>
-                <td>{{ \Carbon\Carbon::parse($data->tanggal)->format('d/m/Y') }}</td>
-                <td>{{ $data->keterangan ?? '-' }}</td>
-                <td>{{ number_format($data->jumlah, 0, ',', '.') }}</td>
-                <td></td>
+                <td>{{ \Carbon\Carbon::parse($data['tanggal'])->format('d/m/Y') }}</td>
+                <td>{{ $data['keterangan'] }}</td>
+                <td>{{ $data['debit'] ? number_format($data['debit'], 0, ',', '.') : '-' }}</td>
+                <td>{{ $data['kredit'] ? number_format($data['kredit'], 0, ',', '.') : '-' }}</td>
             </tr>
-            @php $totalDebit += $data->jumlah; @endphp
-            @endforeach
+        @endforeach
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="2">Total</td>
+            <td>{{ number_format($totalDebit, 0, ',', '.') }}</td>
+            <td>{{ number_format($totalKredit, 0, ',', '.') }}</td>
+        </tr>
+        <tr>
+            <td colspan="2">Saldo Akhir</td>
+            <td colspan="2">{{ number_format($saldoAkhir, 0, ',', '.') }}</td>
+        </tr>
+    </tfoot>
+</table>
 
-            @foreach($pengeluaran as $data)
-            <tr>
-                <td>{{ \Carbon\Carbon::parse($data->tanggal)->format('d/m/Y') }}</td>
-                <td>{{ $data->keterangan ?? '-' }}</td>
-                <td></td>
-                <td>{{ number_format($data->jumlah, 0, ',', '.') }}</td>
-            </tr>
-            @php $totalKredit += $data->jumlah; @endphp
-            @endforeach
+<footer>
+    <div class="footer-left">
+        Dicetak pada {{ $tanggalCetak }} oleh {{ $namaUser }}
+    </div>
+</footer>
 
-            <tr>
-                <th colspan="2">Total</th>
-                <th>{{ number_format($totalDebit, 0, ',', '.') }}</th>
-                <th>{{ number_format($totalKredit, 0, ',', '.') }}</th>
-            </tr>
-            <tr>
-                <th colspan="2">Saldo Akhir</th>
-                <th colspan="2">{{ number_format($totalDebit - $totalKredit, 0, ',', '.') }}</th>
-            </tr>
-        </tbody>
-    </table>
 
-    <p style="margin-top: 40px;">Dicetak oleh: {{ $namaUser }}</p>
-    <p>Tanggal Cetak: {{ now()->format('d-m-Y H:i') }}</p>
 </body>
 </html>

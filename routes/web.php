@@ -54,7 +54,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 // Cetak
 // ===========================
 Route::get('/cetak', [CetakController::class, 'index'])->name('cetak.index');
-Route::get('/cetak/pdf', [CetakController::class, 'exportPDF'])->name('cetak.pdf');
+Route::get('/cetak/pdf', [CetakController::class, 'cetakPDF'])->name('cetak.pdf');
 
 // ===========================
 // Pendapatan
