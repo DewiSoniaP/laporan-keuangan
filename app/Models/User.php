@@ -25,6 +25,7 @@ class User extends Authenticatable
         'email',
         'password',
         'whatsapp',
+        'role',         // tambahkan role agar bisa diisi mass assignment
     ];
 
     /**
@@ -45,4 +46,20 @@ class User extends Authenticatable
     protected $casts = [
         'password' => 'hashed',
     ];
+
+    /**
+     * Cek apakah user adalah admin.
+     */
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    /**
+     * Cek apakah user adalah user biasa.
+     */
+    public function isUser()
+    {
+        return $this->role === 'user';
+    }
 }
