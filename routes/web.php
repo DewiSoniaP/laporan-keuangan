@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Password;
 use Illuminate\Http\Request;
 
 use App\Http\Controllers\ForgotPasswordController;
@@ -11,6 +10,7 @@ use App\Http\Controllers\PendapatanController;
 use App\Http\Controllers\PengeluaranController;
 use App\Http\Controllers\DataKaryawanController;
 use App\Http\Controllers\CetakController;
+use App\Http\Controllers\UserController;
 
 // ===========================
 // Halaman Login
@@ -57,7 +57,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Pendapatan
     Route::get('/pendapatan', [PendapatanController::class, 'index'])->name('pendapatan.index');
-    
+
     // Validasi data pendapatan (admin + user)
     Route::post('/pendapatan/{id}/validate', [PendapatanController::class, 'validateData'])
         ->middleware('role:admin,user')
@@ -99,6 +99,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/datakaryawan/{id}/edit', [DataKaryawanController::class, 'edit'])->name('datakaryawan.edit');
         Route::put('/datakaryawan/{id}', [DataKaryawanController::class, 'update'])->name('datakaryawan.update');
         Route::delete('/datakaryawan/{id}', [DataKaryawanController::class, 'destroy'])->name('datakaryawan.destroy');
+    });
+
+    // Manajemen User (hanya admin)
+    Route::middleware(['role:admin'])->group(function () {
+        Route::resource('users', UserController::class)->except(['show']);
     });
 
     // Logout
