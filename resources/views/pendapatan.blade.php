@@ -115,8 +115,7 @@
                                     <option value="">-- Semua --</option>
                                     <option value="verified" {{ request('status') == 'verified' ? 'selected' : '' }}>
                                         Terverifikasi</option>
-                                    <option value="unverified"
-                                        {{ request('status') == 'unverified' ? 'selected' : '' }}>
+                                    <option value="unverified" {{ request('status') == 'unverified' ? 'selected' : '' }}>
                                         Belum Terverifikasi</option>
                                 </select>
                             </div>
@@ -128,8 +127,10 @@
                                 <a href="{{ route('pendapatan.index') }}" class="btn btn-danger">Reset</a>
                             </div>
                             <!-- Tombol untuk buka modal -->
+                            @if(Auth::user()->role === 'admin')
                             <button type="button" class="btn btn-success" data-bs-toggle="modal"
                                 data-bs-target="#modalCreate">Input Pendapatan</button>
+                            @endif
                         </div>
                     </form>
 
@@ -167,10 +168,21 @@
                                             @if ($item->is_verified)
                                                 <span class="badge bg-success">Terverifikasi</span>
                                             @else
-                                                <span class="badge bg-warning">Belum Diverifikasi</span>
+                                                @if (Auth::user()->role === 'user')
+                                                    <form action="{{ route('pendapatan.validate', $item->idPendapatan) }}" method="POST" class="d-inline">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-sm btn-warning"
+                                                            onclick="return confirm('Yakin ingin memverifikasi data ini?')">
+                                                            Belum Diverifikasi (Klik untuk Verifikasi)
+                                                        </button>
+                                                    </form>
+                                                @else
+                                                    <span class="badge bg-warning">Belum Diverifikasi</span>
+                                                @endif
                                             @endif
                                         </td>
                                         <td class="text-nowrap">
+                                            @if(Auth::user()->role === 'admin')
                                             <!-- Tombol Edit -->
                                             <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal"
                                                 data-bs-target="#modalEdit{{ $item->idPendapatan }}">Edit</button>
@@ -179,11 +191,8 @@
                                                 data-bs-target="#modalDelete{{ $item->idPendapatan }}">
                                                 Hapus
                                             </button>
-
-
-
+                                            @endif
                                         </td>
-
                                     </tr>
                                 @empty
                                     <tr>
@@ -201,6 +210,7 @@
 
     @foreach ($pendapatan as $item)
         {{-- modal edit --}}
+        @if(Auth::user()->role === 'admin')
         <div class="modal fade" id="modalEdit{{ $item->idPendapatan }}" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered">
                 <form action="{{ route('pendapatan.update', $item->idPendapatan) }}" method="POST">
@@ -273,7 +283,10 @@
                 </form>
             </div>
         </div>
+        @endif
+
         {{-- modal delete --}}
+        @if(Auth::user()->role === 'admin')
         <div class="modal fade" id="modalDelete{{ $item->idPendapatan }}" tabindex="-1"
             aria-labelledby="modalDeleteLabel{{ $item->idPendapatan }}" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -298,9 +311,11 @@
                 </div>
             </div>
         </div>
+        @endif
     @endforeach
 
     {{-- Modal input pendapatan --}}
+    @if(Auth::user()->role === 'admin')
     <div class="modal fade" id="modalCreate" tabindex="-1" aria-labelledby="modalCreateLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <form action="{{ route('pendapatan.store') }}" method="POST">
@@ -368,6 +383,7 @@
             </form>
         </div>
     </div>
+    @endif
 </body>
 
 </html>
