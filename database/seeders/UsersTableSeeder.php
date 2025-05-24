@@ -15,6 +15,7 @@ class UsersTableSeeder extends Seeder
             'email' => 'admin@example.com',
             'password' => Hash::make('password123'),
             'whatsapp' => '081234567890',
+            'role' => 'admin',
         ]);
 
         User::create([
@@ -22,6 +23,7 @@ class UsersTableSeeder extends Seeder
             'email' => 'user@example.com',
             'password' => Hash::make('secret123'),
             'whatsapp' => null,
+            'role' => 'user',
         ]);
     }
 }
