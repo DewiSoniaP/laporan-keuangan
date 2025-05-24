@@ -173,7 +173,7 @@
                                                         @csrf
                                                         <button type="submit" class="btn btn-sm btn-warning"
                                                             onclick="return confirm('Yakin ingin memverifikasi data ini?')">
-                                                            Belum Diverifikasi (Klik untuk Verifikasi)
+                                                            Belum Diverifikasi
                                                         </button>
                                                     </form>
                                                 @else
