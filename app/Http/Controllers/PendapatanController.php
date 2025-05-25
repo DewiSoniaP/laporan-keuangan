@@ -8,26 +8,34 @@ use App\Models\Pendapatan;
 class PendapatanController extends Controller
 {
     public function index(Request $request)
-    {
-        $tanggal = $request->query('tanggal');
-        $status = $request->query('status');
+{
+    $tanggal = $request->query('tanggal');
+    $status = $request->query('status');
 
-        $query = Pendapatan::query();
+    $query = Pendapatan::query();
 
-        if ($tanggal) {
-            $query->whereDate('tanggal', $tanggal);
-        }
-
-        if ($status === 'verified') {
-            $query->where('is_verified', true);
-        } elseif ($status === 'unverified') {
-            $query->where('is_verified', false);
-        }
-
-        $pendapatan = $query->orderBy('tanggal', 'desc')->get();
-
-        return view('pendapatan', compact('pendapatan', 'tanggal', 'status'));
+    if ($tanggal) {
+        $query->whereDate('tanggal', $tanggal);
     }
+
+    if ($status === 'verified') {
+        $query->where('is_verified', true);
+    } elseif ($status === 'unverified') {
+        $query->where('is_verified', false);
+    }
+
+    $pendapatan = $query->orderBy('tanggal', 'desc')->get();
+
+    // Cari data paling awal yang belum diverifikasi
+    $earliestUnverified = Pendapatan::where('is_verified', false)
+        ->orderBy('tanggal', 'asc')
+        ->orderBy('idPendapatan', 'asc')
+        ->first();
+
+    $earliestUnverifiedId = $earliestUnverified ? $earliestUnverified->idPendapatan : null;
+
+    return view('pendapatan', compact('pendapatan', 'tanggal', 'status', 'earliestUnverifiedId'));
+}
 
     public function store(Request $request)
     {
@@ -36,11 +44,36 @@ class PendapatanController extends Controller
     }
     
     public function update(Request $request, $id)
-    {
-        $data = Pendapatan::findOrFail($id);
-        $data->update($request->all());
-        return redirect()->route('pendapatan.index')->with('success', 'Data berhasil diperbarui.');
+{
+    $data = Pendapatan::findOrFail($id);
+
+    // Simpan data lama untuk dibandingkan
+    $oldData = $data->toArray();
+
+    // Update data dengan input baru
+    $data->update($request->all());
+
+    // Cek perubahan atribut selain 'is_verified' dan 'updated_at'
+    $changedAttributes = $data->getChanges();
+    unset($changedAttributes['is_verified'], $changedAttributes['updated_at']);
+
+    // Jika sebelumnya sudah terverifikasi dan ada perubahan data, reset verifikasi
+    if ($oldData['is_verified'] && count($changedAttributes) > 0) {
+        $data->is_verified = false;
+
+        // Jika kolom verified_by dan verified_at ada, reset juga:
+        if (isset($data->verified_by)) {
+            $data->verified_by = null;
+        }
+        if (isset($data->verified_at)) {
+            $data->verified_at = null;
+        }
+
+        $data->save();
     }
+
+    return redirect()->route('pendapatan.index')->with('success', 'Data berhasil diperbarui.');
+}
     
     public function destroy($id)
     {
@@ -52,32 +85,35 @@ class PendapatanController extends Controller
      * Validasi data pendapatan secara berurutan.
      */
     public function validateData($id)
-    {
-        $user = auth()->user();
+{
+    $user = auth()->user();
 
-        // Cek apakah user memiliki role admin atau user
-        if (!in_array($user->role, ['admin', 'user'])) {
-            abort(403, 'Unauthorized');
-        }
+    if (!in_array($user->role, ['admin', 'user'])) {
+        abort(403, 'Unauthorized');
+    }
 
-        $data = Pendapatan::findOrFail($id);
+    $data = Pendapatan::findOrFail($id);
 
-        // Cek apakah ada data pendapatan sebelumnya yang belum divalidasi
-        $pendingBefore = Pendapatan::where('id', '<', $id)
-            ->where('is_verified', false)
-            ->count();
+    // Cari data pendapatan belum diverifikasi yang paling awal (tanggal asc, id asc)
+    $earliestUnverified = Pendapatan::where('is_verified', false)
+        ->orderBy('tanggal', 'asc')
+        ->orderBy('idPendapatan', 'asc') // pakai idPendapatan karena primary key custom
+        ->first();
 
-        if ($pendingBefore > 0) {
+    if (!$earliestUnverified) {
+        // Semua sudah diverifikasi, boleh lanjut
+    } else {
+        // Jika data yang akan diverifikasi bukan data paling awal
+        if ($earliestUnverified->idPendapatan != $data->idPendapatan) {
             return redirect()->route('pendapatan.index')
                 ->with('error', 'Validasi harus dilakukan secara berurutan, ada data sebelumnya yang belum divalidasi.');
         }
-
-        // Validasi data
-        $data->is_verified = true;
-        $data->verified_by = $user->id; // pastikan ada kolom verified_by di tabel pendapatan
-        $data->verified_at = now();      // dan kolom verified_at
-        $data->save();
-
-        return redirect()->route('pendapatan.index')->with('success', 'Data berhasil divalidasi.');
     }
+
+    // Lakukan validasi
+    $data->is_verified = true;
+    $data->save();
+
+    return redirect()->route('pendapatan.index')->with('success', 'Data berhasil divalidasi.');
+}
 }

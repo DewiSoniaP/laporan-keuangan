@@ -166,20 +166,25 @@
                                         <td class="text-nowrap">Rp {{ number_format($item->jasa, 0, ',', '.') }}</td>
                                         <td class="text-nowrap text-white">
                                             @if ($item->is_verified)
-                                                <span class="badge bg-success">Terverifikasi</span>
-                                            @else
-                                                @if (Auth::user()->role === 'user')
-                                                    <form action="{{ route('pendapatan.validate', $item->idPendapatan) }}" method="POST" class="d-inline">
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-sm btn-warning"
-                                                            onclick="return confirm('Yakin ingin memverifikasi data ini?')">
-                                                            Belum Diverifikasi
-                                                        </button>
-                                                    </form>
-                                                @else
-                                                    <span class="badge bg-warning">Belum Diverifikasi</span>
-                                                @endif
-                                            @endif
+    <span class="badge bg-success">Terverifikasi</span>
+@else
+    @if (Auth::user()->role === 'user')
+        @if ($item->idPendapatan == $earliestUnverifiedId)
+            <form action="{{ route('pendapatan.validate', $item->idPendapatan) }}" method="POST" class="d-inline">
+                @csrf
+                <button type="submit" class="btn btn-sm btn-warning"
+                    onclick="return confirm('Yakin ingin memverifikasi data ini?')">
+                    Belum Diverifikasi
+                </button>
+            </form>
+        @else
+            <span class="badge bg-secondary">Tunggu data sebelumnya diverifikasi</span>
+        @endif
+    @else
+        <span class="badge bg-warning">Belum Diverifikasi</span>
+    @endif
+@endif
+
                                         </td>
                                         <td class="text-nowrap">
                                             @if(Auth::user()->role === 'admin')
