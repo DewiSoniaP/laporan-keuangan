@@ -7,6 +7,7 @@
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
     <style>
         body {
             margin: 0;
@@ -113,8 +114,7 @@
                                     <option value="">-- Semua --</option>
                                     <option value="verified" {{ request('status') == 'verified' ? 'selected' : '' }}>
                                         Terverifikasi</option>
-                                    <option value="unverified"
-                                        {{ request('status') == 'unverified' ? 'selected' : '' }}>
+                                    <option value="unverified" {{ request('status') == 'unverified' ? 'selected' : '' }}>
                                         Belum Terverifikasi</option>
                                 </select>
                             </div>
@@ -126,8 +126,10 @@
                                 <a href="{{ route('pengeluaran.index') }}" class="btn btn-danger">Reset</a>
                             </div>
                             <!-- Tombol untuk buka modal -->
+                             @if(Auth::user()->role === 'admin')
                             <button type="button" class="btn btn-success" data-bs-toggle="modal"
                                 data-bs-target="#modalCreate">Input pengeluaran</button>
+                            @endif
                         </div>
                     </form>
 
@@ -157,10 +159,25 @@
                                             @if ($item->is_verified)
                                                 <span class="badge bg-success">Terverifikasi</span>
                                             @else
-                                                <span class="badge bg-warning">Belum Diverifikasi</span>
-                                            @endif
+                                                @if (Auth::user()->role === 'user')
+        @if ($item->idPengeluaran == $earliestUnverifiedId)
+            <form action="{{ route('pengeluaran.validate', $item->idPengeluaran) }}" method="POST" class="d-inline">
+                @csrf
+                <button type="submit" class="btn btn-sm btn-warning"
+                    onclick="return confirm('Yakin ingin memverifikasi data ini?')">
+                    Belum Diverifikasi
+                </button>
+            </form>
+        @else
+            <span class="badge bg-secondary">Tunggu data sebelumnya diverifikasi</span>
+        @endif
+    @else
+        <span class="badge bg-warning">Belum Diverifikasi</span>
+    @endif
+@endif
                                         </td>
                                         <td class="text-nowrap">
+                                            @if(Auth::user()->role === 'admin')
                                             <!-- Tombol Edit -->
                                             <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal"
                                                 data-bs-target="#modalEdit{{ $item->idPengeluaran }}">Edit</button>
@@ -169,6 +186,7 @@
                                                 data-bs-target="#modalDelete{{ $item->idPengeluaran }}">
                                                 Hapus
                                             </button>
+                                            @endif
                                         </td>
 
                                     </tr>
@@ -187,6 +205,7 @@
 
     @foreach ($pengeluaran as $item)
         {{-- modal edit --}}
+        @if(Auth::user()->role === 'admin')
         <div class="modal fade" id="modalEdit{{ $item->idPengeluaran }}" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered">
                 <form action="{{ route('pengeluaran.update', $item->idPengeluaran) }}" method="POST">
@@ -219,11 +238,14 @@
                                 <label>Status Verifikasi</label>
                                 <div class="form-control">
                                     <select name="is_verified" class="w-100 border-0" required style="outline: none">
-                                        <option value="1">Terverifikasi</option>
-                                        <option value="0">Belum Terverifikasi</option>
+                                        <option value="1" {{ $item->is_verified == 1 ? 'selected' : '' }}>
+                                            Terverifikasi</option>
+                                        <option value="0" {{ $item->is_verified == 0 ? 'selected' : '' }}>Belum
+                                            Terverifikasi</option>
                                     </select>
                                 </div>
                             </div>
+                        </div>
                             <div class="">
                                 <label>keterangan</label>
                                 <textarea name="keterangan" class="form-control" placeholder="Masukkan keterangan" required>{{ $item->keterangan }}</textarea>
@@ -237,7 +259,10 @@
                 </form>
             </div>
         </div>
+        @endif
+
         {{-- modal delete --}}
+        @if(Auth::user()->role === 'admin')
         <div class="modal fade" id="modalDelete{{ $item->idPengeluaran }}" tabindex="-1"
             aria-labelledby="modalDeleteLabel{{ $item->idPengeluaran }}" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -261,9 +286,11 @@
                 </div>
             </div>
         </div>
+        @endif
     @endforeach
 
     {{-- Modal input pengeluaran --}}
+    @if(Auth::user()->role === 'admin')
     <div class="modal fade" id="modalCreate" tabindex="-1" aria-labelledby="modalCreateLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <form action="{{ route('pengeluaran.store') }}" method="POST">
@@ -311,6 +338,7 @@
             </form>
         </div>
     </div>
+    @endif
 </body>
 
 </html>
