@@ -30,7 +30,7 @@
 
         .left-panel {
             flex: 1.2;
-            background: url('{{ asset("images/header-login.webp") }}') no-repeat center;
+            background: url('{{ asset("images/header login.webp") }}') no-repeat center;
             background-size: cover;
             min-height: 450px;
         }
