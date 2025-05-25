@@ -19,11 +19,11 @@ class UsersTableSeeder extends Seeder
         ]);
 
         User::create([
-            'name' => 'User Biasa',
+            'name' => 'Validator User',
             'email' => 'user@example.com',
             'password' => Hash::make('secret123'),
             'whatsapp' => null,
-            'role' => 'user',
+            'role' => 'validator',
         ]);
     }
 }

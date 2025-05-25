@@ -58,9 +58,9 @@ Route::middleware(['auth'])->group(function () {
     // Pendapatan
     Route::get('/pendapatan', [PendapatanController::class, 'index'])->name('pendapatan.index');
 
-    // Validasi data pendapatan (admin + user)
+    // Validasi data pendapatan (admin + validator)
     Route::post('/pendapatan/{id}/validate', [PendapatanController::class, 'validateData'])
-        ->middleware('role:user')
+        ->middleware('role:validator')
         ->name('pendapatan.validate');
 
     // Hanya admin boleh create, update, delete pendapatan
@@ -77,7 +77,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Validasi data pengeluaran (admin + user)
     Route::post('/pengeluaran/{id}/validate', [PengeluaranController::class, 'validateData'])
-        ->middleware('role:user')
+        ->middleware('role:validator')
         ->name('pengeluaran.validate');
 
     // Hanya admin boleh create, update, delete pengeluaran

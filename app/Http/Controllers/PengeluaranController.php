@@ -89,7 +89,7 @@ class PengeluaranController extends Controller
         $user = auth()->user();
 
         // Cek apakah user memiliki role admin atau user
-        if (!in_array($user->role, ['admin', 'user'])) {
+        if (!in_array($user->role, ['admin', 'validator'])) {
             abort(403, 'Unauthorized');
         }
 

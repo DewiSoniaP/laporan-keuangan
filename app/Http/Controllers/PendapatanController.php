@@ -88,7 +88,7 @@ class PendapatanController extends Controller
 {
     $user = auth()->user();
 
-    if (!in_array($user->role, ['admin', 'user'])) {
+    if (!in_array($user->role, ['admin', 'validator'])) {
         abort(403, 'Unauthorized');
     }
 

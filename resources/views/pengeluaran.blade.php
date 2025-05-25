@@ -159,7 +159,7 @@
                                             @if ($item->is_verified)
                                                 <span class="badge bg-success">Terverifikasi</span>
                                             @else
-                                                @if (Auth::user()->role === 'user')
+                                                @if (Auth::user()->role === 'validator')
         @if ($item->idPengeluaran == $earliestUnverifiedId)
             <form action="{{ route('pengeluaran.validate', $item->idPengeluaran) }}" method="POST" class="d-inline">
                 @csrf
