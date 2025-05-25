@@ -12,9 +12,9 @@ class UsersTableSeeder extends Seeder
     {
         User::create([
             'name' => 'Admin User',
-            'email' => 'admin@example.com',
-            'password' => Hash::make('password123'),
-            'whatsapp' => '081234567890',
+            'email' => 'pmbniningkeuangan@gmail.com',
+            'password' => Hash::make('adminkeuangan123'),
+            'whatsapp' => '085624844745',
             'role' => 'admin',
         ]);
 
