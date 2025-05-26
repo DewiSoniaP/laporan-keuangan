@@ -30,7 +30,7 @@
 
         .left-panel {
             flex: 1.2;
-            background: url('{{ asset("images/header login.png") }}') no-repeat center;
+            background: url('{{ asset("images/login-image.png") }}') no-repeat center;
             background-size: cover;
             min-height: 450px;
         }
