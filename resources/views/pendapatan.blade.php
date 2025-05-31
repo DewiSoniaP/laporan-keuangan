@@ -319,76 +319,68 @@
         @endif
     @endforeach
 
-    {{-- Modal input pendapatan --}}
-    @if(Auth::user()->role === 'admin')
-    <div class="modal fade" id="modalCreate" tabindex="-1" aria-labelledby="modalCreateLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <form action="{{ route('pendapatan.store') }}" method="POST">
-                @csrf
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modalCreateLabel">Tambah Pendapatan</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body row g-3">
-                        <!-- isi input form di sini -->
-                        <div class="col-md-6">
-                            <label>Tanggal</label>
-                            <input type="date" name="tanggal" class="form-control" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label>Nama Pasien</label>
-                            <input type="text" name="namaPasien" class="form-control"
-                                placeholder="masukan nama pasien" required>
-                        </div>
-                        <div class="col-md-3">
-                            <label>Usia</label>
-                            <input type="number" name="usia" class="form-control" placeholder="0" required>
-                        </div>
-                        <div class="col-md-9">
-                            <label>Nama Keluarga</label>
-                            <input type="text" name="namaKeluarga" class="form-control"
-                                placeholder="masukan nama keluarga" required>
-                        </div>
-                        <div class="col-md-12">
-                            <label>Alamat</label>
-                            <input type="text" name="alamat" class="form-control"
-                                placeholder="masukan nama alamat" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label>Diagnosa</label>
-                            <input type="text" name="diagnose" class="form-control"
-                                placeholder="masukan hasil diagnose" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label>Jenis Kunjungan</label>
-                            <input type="text" name="jenisKunjungan" class="form-control"
-                                placeholder="masukan jenis kunjungan" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label>Jasa</label>
-                            <input type="number" name="jasa" class="form-control"
-                                placeholder="masukan harga jasa" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label>Status Verifikasi</label>
-                            <div class="form-control">
-                                <select name="is_verified" class="w-100 border-0" required style="outline: none">
-                                    <option value="1">Terverifikasi</option>
-                                    <option value="0">Belum Terverifikasi</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Simpan</button>
-                    </div>
+{{-- Modal input pendapatan --}}
+@if(Auth::user()->role === 'admin')
+<div class="modal fade" id="modalCreate" tabindex="-1" aria-labelledby="modalCreateLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <form action="{{ route('pendapatan.store') }}" method="POST">
+            @csrf
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalCreateLabel">Tambah Pendapatan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
-            </form>
-        </div>
+                <div class="modal-body row g-3">
+                    <!-- isi input form di sini -->
+                    <div class="col-md-6">
+                        <label>Tanggal</label>
+                        <input type="date" name="tanggal" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Nama Pasien</label>
+                        <input type="text" name="namaPasien" class="form-control"
+                            placeholder="masukan nama pasien" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label>Usia</label>
+                        <input type="number" name="usia" class="form-control" placeholder="0" required>
+                    </div>
+                    <div class="col-md-9">
+                        <label>Nama Keluarga</label>
+                        <input type="text" name="namaKeluarga" class="form-control"
+                            placeholder="masukan nama keluarga" required>
+                    </div>
+                    <div class="col-md-12">
+                        <label>Alamat</label>
+                        <input type="text" name="alamat" class="form-control"
+                            placeholder="masukan nama alamat" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Diagnosa</label>
+                        <input type="text" name="diagnose" class="form-control"
+                            placeholder="masukan hasil diagnose" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Jenis Kunjungan</label>
+                        <input type="text" name="jenisKunjungan" class="form-control"
+                            placeholder="masukan jenis kunjungan" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Jasa</label>
+                        <input type="number" name="jasa" class="form-control"
+                            placeholder="masukan harga jasa" required>
+                    </div>
+                    <!-- Tidak ada input status verifikasi di form input -->
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </div>
+        </form>
     </div>
-    @endif
+</div>
+@endif
 </body>
 
 </html>

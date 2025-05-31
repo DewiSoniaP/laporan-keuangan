@@ -7,7 +7,7 @@
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <style>
         body {
             margin: 0;
@@ -66,6 +66,7 @@
 <body>
     <div class="container-fluid px-0">
         <div class="row m-0">
+
             <!-- Sidebar -->
             <div class="col-md-2 p-0">
                 <div class="sidebar">
@@ -126,9 +127,9 @@
                                 <a href="{{ route('pengeluaran.index') }}" class="btn btn-danger">Reset</a>
                             </div>
                             <!-- Tombol untuk buka modal -->
-                             @if(Auth::user()->role === 'admin')
+                            @if(Auth::user()->role === 'admin')
                             <button type="button" class="btn btn-success" data-bs-toggle="modal"
-                                data-bs-target="#modalCreate">Input pengeluaran</button>
+                                data-bs-target="#modalCreate">Input Pengeluaran</button>
                             @endif
                         </div>
                     </form>
@@ -153,13 +154,13 @@
                                         <td class="text-nowrap">
                                             {{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d M Y') }}</td>
                                         <td class="text-nowrap">{{ $item->keperluanPengeluaran }}</td>
-                                        <td class="text-nowrap">{{ $item->jumlahPengeluaran }}</td>
+                                        <td class="text-nowrap">Rp {{ number_format($item->jumlahPengeluaran, 0, ',', '.') }}</td>
                                         <td class="text-nowrap">{{ $item->keterangan }}</td>
                                         <td class="text-nowrap text-white">
                                             @if ($item->is_verified)
-                                                <span class="badge bg-success">Terverifikasi</span>
-                                            @else
-                                                @if (Auth::user()->role === 'validator')
+    <span class="badge bg-success">Terverifikasi</span>
+@else
+    @if (Auth::user()->role === 'validator')
         @if ($item->idPengeluaran == $earliestUnverifiedId)
             <form action="{{ route('pengeluaran.validate', $item->idPengeluaran) }}" method="POST" class="d-inline">
                 @csrf
@@ -175,6 +176,7 @@
         <span class="badge bg-warning">Belum Diverifikasi</span>
     @endif
 @endif
+
                                         </td>
                                         <td class="text-nowrap">
                                             @if(Auth::user()->role === 'admin')
@@ -188,16 +190,16 @@
                                             </button>
                                             @endif
                                         </td>
-
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="7" class="text-center">Belum ada data pengeluaran.</td>
+                                        <td colspan="11" class="text-center">Belum ada data pengeluaran.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
                         </table>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -205,61 +207,48 @@
 
     @foreach ($pengeluaran as $item)
         {{-- modal edit --}}
-        @if(Auth::user()->role === 'admin')
-        <div class="modal fade" id="modalEdit{{ $item->idPengeluaran }}" tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered">
-                <form action="{{ route('pengeluaran.update', $item->idPengeluaran) }}" method="POST">
-                    @csrf @method('PUT')
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Edit Pengeluaran</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-
-                        <div class="modal-body row g-3">
-                            <!-- isi input form di sini -->
-                            <div class="col-md-6">
-                                <label>Tanggal</label>
-                                <input type="date" name="tanggal" value="{{ $item->tanggal }}" class="form-control"
-                                    required>
-                            </div>
-                            <div class="col-md-6">
-                                <label>Keperluan Pengeluaran</label>
-                                <input type="text" name="keperluanPengeluaran" class="form-control"
-                                    placeholder="masukan Keperluan Pengeluaran"
-                                    value="{{ $item->keperluanPengeluaran }}" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label>Jumlah Pengeluaran</label>
-                                <input type="number" name="jumlahPengeluaran" class="form-control" placeholder="0"
-                                    value="{{ $item->jumlahPengeluaran }}" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label>Status Verifikasi</label>
-                                <div class="form-control">
-                                    <select name="is_verified" class="w-100 border-0" required style="outline: none">
-                                        <option value="1" {{ $item->is_verified == 1 ? 'selected' : '' }}>
-                                            Terverifikasi</option>
-                                        <option value="0" {{ $item->is_verified == 0 ? 'selected' : '' }}>Belum
-                                            Terverifikasi</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                            <div class="">
-                                <label>keterangan</label>
-                                <textarea name="keterangan" class="form-control" placeholder="Masukkan keterangan" required>{{ $item->keterangan }}</textarea>
-
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button class="btn btn-primary">Update</button>
-                        </div>
+@if(Auth::user()->role === 'admin')
+<div class="modal fade" id="modalCreate" tabindex="-1" aria-labelledby="modalCreateLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <form action="{{ route('pengeluaran.store') }}" method="POST">
+            @csrf
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalCreateLabel">Tambah Pengeluaran</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body row g-3">
+                    <!-- isi input form di sini -->
+                    <div class="col-md-6">
+                        <label>Tanggal</label>
+                        <input type="date" name="tanggal" class="form-control" required>
                     </div>
-                </form>
+                    <div class="col-md-6">
+                        <label>Keperluan Pengeluaran</label>
+                        <input type="text" name="keperluanPengeluaran" class="form-control"
+                            placeholder="masukan keperluan pengeluaran" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Jumlah Pengeluaran</label>
+                        <input type="number" name="jumlahPengeluaran" class="form-control"
+                            placeholder="masukan jumlah pengeluaran" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Keterangan</label>
+                        <input type="text" name="keterangan" class="form-control"
+                            placeholder="masukan keterangan" required>
+                    </div>
+                    {{-- Ganti select status verifikasi dengan input hidden supaya otomatis belum terverifikasi --}}
+                    <input type="hidden" name="is_verified" value="0">
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
             </div>
-        </div>
-        @endif
+        </form>
+    </div>
+</div>
+@endif
 
         {{-- modal delete --}}
         @if(Auth::user()->role === 'admin')
@@ -273,7 +262,8 @@
                             aria-label="Tutup"></button>
                     </div>
                     <div class="modal-body">
-                        Apakah Anda yakin ingin menghapus data pengeluaran                         <strong>{{ $item->keperluanPengeluaran }}</strong>?
+                        Apakah Anda yakin ingin menghapus data pengeluaran atas nama
+                        <strong>{{ $item->keperluanPengeluaran }}</strong>?
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
@@ -310,12 +300,17 @@
                         <div class="col-md-6">
                             <label>Keperluan Pengeluaran</label>
                             <input type="text" name="keperluanPengeluaran" class="form-control"
-                                placeholder="masukan Keperluan Pengeluaran" required>
+                                placeholder="masukan keperluan pengeluaran" required>
                         </div>
                         <div class="col-md-6">
                             <label>Jumlah Pengeluaran</label>
-                            <input type="number" name="jumlahPengeluaran" class="form-control" placeholder="0"
-                                required>
+                            <input type="number" name="jumlahPengeluaran" class="form-control"
+                                placeholder="masukan jumlah pengeluaran" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Keterangan</label>
+                            <input type="text" name="keterangan" class="form-control"
+                                placeholder="masukan keterangan" required>
                         </div>
                         <div class="col-md-6">
                             <label>Status Verifikasi</label>
@@ -325,10 +320,6 @@
                                     <option value="0">Belum Terverifikasi</option>
                                 </select>
                             </div>
-                        </div>
-                        <div class="">
-                            <label>keterangan</label>
-                            <textarea type="text" name="keterangan" class="form-control" placeholder="masukan keterangan" required></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">

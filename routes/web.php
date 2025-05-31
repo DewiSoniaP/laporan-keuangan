@@ -54,7 +54,8 @@ Route::middleware(['auth'])->group(function () {
     // Cetak
     Route::get('/cetak', [CetakController::class, 'index'])->name('cetak.index');
     Route::get('/cetak/pdf', [CetakController::class, 'cetakPDF'])->name('cetak.pdf');
-
+    Route::get('/cetak/detail-data', [CetakController::class, 'detailData'])->name('cetak.detailData');
+    
     // Pendapatan
     Route::get('/pendapatan', [PendapatanController::class, 'index'])->name('pendapatan.index');
 
@@ -93,13 +94,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/datakaryawan', [DataKaryawanController::class, 'index'])->name('datakaryawan.index');
 
     // Hanya admin boleh create, update, delete karyawan
-    Route::middleware(['role:admin'])->group(function () {
-        Route::get('/datakaryawan/input', [DataKaryawanController::class, 'create'])->name('datakaryawan.create');
-        Route::post('/datakaryawan', [DataKaryawanController::class, 'store'])->name('datakaryawan.store');
-        Route::get('/datakaryawan/{id}/edit', [DataKaryawanController::class, 'edit'])->name('datakaryawan.edit');
-        Route::put('/datakaryawan/{id}', [DataKaryawanController::class, 'update'])->name('datakaryawan.update');
-        Route::delete('/datakaryawan/{id}', [DataKaryawanController::class, 'destroy'])->name('datakaryawan.destroy');
-    });
+    Route::middleware(['role:admin,validator'])->group(function () {
+    Route::get('/datakaryawan/input', [DataKaryawanController::class, 'create'])->name('datakaryawan.create');
+    Route::post('/datakaryawan', [DataKaryawanController::class, 'store'])->name('datakaryawan.store');
+    Route::get('/datakaryawan/{id}/edit', [DataKaryawanController::class, 'edit'])->name('datakaryawan.edit');
+    Route::put('/datakaryawan/{id}', [DataKaryawanController::class, 'update'])->name('datakaryawan.update');
+    Route::delete('/datakaryawan/{id}', [DataKaryawanController::class, 'destroy'])->name('datakaryawan.destroy');
+});
 
     // Manajemen User (hanya admin)
     Route::middleware(['role:admin'])->group(function () {
