@@ -71,14 +71,10 @@
             <div class="col-md-2 p-0">
                 <div class="sidebar">
                     <h4>Laporan Keuangan</h4>
-                    <a href="{{ route('dashboard') }}"
-                        class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">Dashboard</a>
-                    <a href="{{ route('pendapatan.index') }}"
-                        class="{{ request()->routeIs('pendapatan.index') ? 'active' : '' }}">Pendapatan</a>
-                    <a href="{{ route('pengeluaran.index') }}"
-                        class="{{ request()->routeIs('pengeluaran.index') ? 'active' : '' }}">Pengeluaran</a>
-                    <a href="{{ route('datakaryawan.index') }}"
-                        class="{{ request()->routeIs('datakaryawan.index') ? 'active' : '' }}">Data Karyawan</a>
+                    <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">Dashboard</a>
+                    <a href="{{ route('pendapatan.index') }}" class="{{ request()->routeIs('pendapatan.index') ? 'active' : '' }}">Pendapatan</a>
+                    <a href="{{ route('pengeluaran.index') }}" class="{{ request()->routeIs('pengeluaran.index') ? 'active' : '' }}">Pengeluaran</a>
+                    <a href="{{ route('datakaryawan.index') }}" class="{{ request()->routeIs('datakaryawan.index') ? 'active' : '' }}">Data Karyawan</a>
                 </div>
             </div>
 
@@ -113,10 +109,8 @@
                             <div class="px-2 form-control">
                                 <select name="status" id="status" class="w-100 border-0" style="outline: none">
                                     <option value="">-- Semua --</option>
-                                    <option value="verified" {{ request('status') == 'verified' ? 'selected' : '' }}>
-                                        Terverifikasi</option>
-                                    <option value="unverified" {{ request('status') == 'unverified' ? 'selected' : '' }}>
-                                        Belum Terverifikasi</option>
+                                    <option value="verified" {{ request('status') == 'verified' ? 'selected' : '' }}>Terverifikasi</option>
+                                    <option value="unverified" {{ request('status') == 'unverified' ? 'selected' : '' }}>Belum Terverifikasi</option>
                                 </select>
                             </div>
                         </div>
@@ -126,10 +120,8 @@
                                 <button type="submit" class="btn btn-primary">Filter</button>
                                 <a href="{{ route('pengeluaran.index') }}" class="btn btn-danger">Reset</a>
                             </div>
-                            <!-- Tombol untuk buka modal -->
                             @if(Auth::user()->role === 'admin')
-                            <button type="button" class="btn btn-success" data-bs-toggle="modal"
-                                data-bs-target="#modalCreate">Input Pengeluaran</button>
+                            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalCreate">Input Pengeluaran</button>
                             @endif
                         </div>
                     </form>
@@ -149,52 +141,49 @@
                             </thead>
                             <tbody>
                                 @forelse ($pengeluaran as $item)
-                                    <tr>
-                                        <td class="text-nowrap">{{ $loop->iteration }}</td>
-                                        <td class="text-nowrap">
-                                            {{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d M Y') }}</td>
-                                        <td class="text-nowrap">{{ $item->keperluanPengeluaran }}</td>
-                                        <td class="text-nowrap">Rp {{ number_format($item->jumlahPengeluaran, 0, ',', '.') }}</td>
-                                        <td class="text-nowrap">{{ $item->keterangan }}</td>
-                                        <td class="text-nowrap text-white">
-                                            @if ($item->is_verified)
-    <span class="badge bg-success">Terverifikasi</span>
-@else
-    @if (Auth::user()->role === 'validator')
-        @if ($item->idPengeluaran == $earliestUnverifiedId)
-            <form action="{{ route('pengeluaran.validate', $item->idPengeluaran) }}" method="POST" class="d-inline">
-                @csrf
-                <button type="submit" class="btn btn-sm btn-warning"
-                    onclick="return confirm('Yakin ingin memverifikasi data ini?')">
-                    Belum Diverifikasi
-                </button>
-            </form>
-        @else
-            <span class="badge bg-secondary">Tunggu data sebelumnya diverifikasi</span>
-        @endif
-    @else
-        <span class="badge bg-warning">Belum Diverifikasi</span>
-    @endif
-@endif
-
-                                        </td>
-                                        <td class="text-nowrap">
-                                            @if(Auth::user()->role === 'admin')
-                                            <!-- Tombol Edit -->
-                                            <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal"
-                                                data-bs-target="#modalEdit{{ $item->idPengeluaran }}">Edit</button>
-                                            <!-- Tombol Hapus -->
-                                            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal"
-                                                data-bs-target="#modalDelete{{ $item->idPengeluaran }}">
-                                                Hapus
-                                            </button>
+                                <tr>
+                                    <td class="text-nowrap">{{ $loop->iteration }}</td>
+                                    <td class="text-nowrap">{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d M Y') }}</td>
+                                    <td class="text-nowrap">{{ $item->keperluanPengeluaran }}</td>
+                                    <td class="text-nowrap">Rp {{ number_format($item->jumlahPengeluaran, 0, ',', '.') }}</td>
+                                    <td class="text-nowrap">{{ $item->keterangan }}</td>
+                                    <td class="text-nowrap text-white">
+                                        @if ($item->is_verified)
+                                            <span class="badge bg-success">Terverifikasi</span>
+                                        @else
+                                            @if (Auth::user()->role === 'validator')
+                                                @if ($item->idPengeluaran == $earliestUnverifiedId)
+                                                    <form action="{{ route('pengeluaran.validate', $item->idPengeluaran) }}" method="POST" class="d-inline">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-sm btn-warning" onclick="return confirm('Yakin ingin memverifikasi data ini?')">
+                                                            Belum Diverifikasi
+                                                        </button>
+                                                    </form>
+                                                @else
+                                                    <span class="badge bg-secondary">Tunggu data sebelumnya diverifikasi</span>
+                                                @endif
+                                            @else
+                                                <span class="badge bg-warning">Belum Diverifikasi</span>
                                             @endif
-                                        </td>
-                                    </tr>
+                                        @endif
+                                    </td>
+                                    <td class="text-nowrap">
+                                        @if(Auth::user()->role === 'admin')
+                                        <!-- Tombol Edit -->
+                                        <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal"
+                                            data-bs-target="#modalEdit{{ $item->idPengeluaran }}">Edit</button>
+                                        <!-- Tombol Hapus -->
+                                        <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal"
+                                            data-bs-target="#modalDelete{{ $item->idPengeluaran }}">
+                                            Hapus
+                                        </button>
+                                        @endif
+                                    </td>
+                                </tr>
                                 @empty
-                                    <tr>
-                                        <td colspan="11" class="text-center">Belum ada data pengeluaran.</td>
-                                    </tr>
+                                <tr>
+                                    <td colspan="7" class="text-center">Belum ada data pengeluaran.</td>
+                                </tr>
                                 @endforelse
                             </tbody>
                         </table>
@@ -205,61 +194,105 @@
         </div>
     </div>
 
-    @foreach ($pengeluaran as $item)
-        {{-- modal edit --}}
-@if(Auth::user()->role === 'admin')
-<div class="modal fade" id="modalCreate" tabindex="-1" aria-labelledby="modalCreateLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <form action="{{ route('pengeluaran.store') }}" method="POST">
-            @csrf
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalCreateLabel">Tambah Pengeluaran</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    {{-- MODAL CREATE --}}
+    @if(Auth::user()->role === 'admin')
+    <div class="modal fade" id="modalCreate" tabindex="-1" aria-labelledby="modalCreateLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <form action="{{ route('pengeluaran.store') }}" method="POST">
+                @csrf
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalCreateLabel">Tambah Pengeluaran</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body row g-3">
+                        <div class="col-md-6">
+                            <label>Tanggal</label>
+                            <input type="date" name="tanggal" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Keperluan Pengeluaran</label>
+                            <input type="text" name="keperluanPengeluaran" class="form-control" placeholder="masukan keperluan pengeluaran" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Jumlah Pengeluaran</label>
+                            <input type="number" name="jumlahPengeluaran" class="form-control" placeholder="masukan jumlah pengeluaran" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Keterangan</label>
+                            <input type="text" name="keterangan" class="form-control" placeholder="masukan keterangan">
+                        </div>
+                        <input type="hidden" name="is_verified" value="0">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </div>
                 </div>
-                <div class="modal-body row g-3">
-                    <!-- isi input form di sini -->
-                    <div class="col-md-6">
-                        <label>Tanggal</label>
-                        <input type="date" name="tanggal" class="form-control" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label>Keperluan Pengeluaran</label>
-                        <input type="text" name="keperluanPengeluaran" class="form-control"
-                            placeholder="masukan keperluan pengeluaran" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label>Jumlah Pengeluaran</label>
-                        <input type="number" name="jumlahPengeluaran" class="form-control"
-                            placeholder="masukan jumlah pengeluaran" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label>Keterangan</label>
-                        <input type="text" name="keterangan" class="form-control"
-                            placeholder="masukan keterangan" required>
-                    </div>
-                    {{-- Ganti select status verifikasi dengan input hidden supaya otomatis belum terverifikasi --}}
-                    <input type="hidden" name="is_verified" value="0">
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Simpan</button>
-                </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
-</div>
-@endif
+    @endif
 
-        {{-- modal delete --}}
+    {{-- MODAL EDIT --}}
+    @foreach ($pengeluaran as $item)
         @if(Auth::user()->role === 'admin')
-        <div class="modal fade" id="modalDelete{{ $item->idPengeluaran }}" tabindex="-1"
-            aria-labelledby="modalDeleteLabel{{ $item->idPengeluaran }}" aria-hidden="true">
+        <div class="modal fade" id="modalEdit{{ $item->idPengeluaran }}" tabindex="-1" aria-labelledby="modalEditLabel{{ $item->idPengeluaran }}" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <form action="{{ route('pengeluaran.update', $item->idPengeluaran) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalEditLabel{{ $item->idPengeluaran }}">Edit Pengeluaran</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body row g-3">
+                            <div class="col-md-6">
+                                <label>Tanggal</label>
+                                <input type="date" name="tanggal" class="form-control" value="{{ $item->tanggal }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Keperluan Pengeluaran</label>
+                                <input type="text" name="keperluanPengeluaran" class="form-control" value="{{ $item->keperluanPengeluaran }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Jumlah Pengeluaran</label>
+                                <input type="number" name="jumlahPengeluaran" class="form-control" value="{{ $item->jumlahPengeluaran }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Keterangan</label>
+                                <input type="text" name="keterangan" class="form-control" value="{{ $item->keterangan }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label>Status Verifikasi</label>
+                                <!-- Disabled select for showing status -->
+                                <select name="is_verified_disabled" class="form-control" disabled>
+                                    <option value="1" {{ $item->is_verified ? 'selected' : '' }}>Terverifikasi</option>
+                                    <option value="0" {{ !$item->is_verified ? 'selected' : '' }}>Belum Terverifikasi</option>
+                                </select>
+                                <!-- Hidden input to submit value -->
+                                <input type="hidden" name="is_verified" value="{{ $item->is_verified ? '1' : '0' }}">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-primary">Update</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        @endif
+    @endforeach
+
+    {{-- MODAL DELETE --}}
+    @foreach ($pengeluaran as $item)
+        @if(Auth::user()->role === 'admin')
+        <div class="modal fade" id="modalDelete{{ $item->idPengeluaran }}" tabindex="-1" aria-labelledby="modalDeleteLabel{{ $item->idPengeluaran }}" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content border-danger">
                     <div class="modal-header bg-danger text-white">
                         <h5 class="modal-title" id="modalDeleteLabel{{ $item->idPengeluaran }}">Konfirmasi Hapus</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                            aria-label="Tutup"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
                     </div>
                     <div class="modal-body">
                         Apakah Anda yakin ingin menghapus data pengeluaran atas nama
@@ -278,58 +311,6 @@
         </div>
         @endif
     @endforeach
-
-    {{-- Modal input pengeluaran --}}
-    @if(Auth::user()->role === 'admin')
-    <div class="modal fade" id="modalCreate" tabindex="-1" aria-labelledby="modalCreateLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <form action="{{ route('pengeluaran.store') }}" method="POST">
-                @csrf
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modalCreateLabel">Tambah Pengeluaran</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body row g-3">
-                        <!-- isi input form di sini -->
-                        <div class="col-md-6">
-                            <label>Tanggal</label>
-                            <input type="date" name="tanggal" class="form-control" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label>Keperluan Pengeluaran</label>
-                            <input type="text" name="keperluanPengeluaran" class="form-control"
-                                placeholder="masukan keperluan pengeluaran" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label>Jumlah Pengeluaran</label>
-                            <input type="number" name="jumlahPengeluaran" class="form-control"
-                                placeholder="masukan jumlah pengeluaran" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label>Keterangan</label>
-                            <input type="text" name="keterangan" class="form-control"
-                                placeholder="masukan keterangan" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label>Status Verifikasi</label>
-                            <div class="form-control">
-                                <select name="is_verified" class="w-100 border-0" required style="outline: none">
-                                    <option value="1">Terverifikasi</option>
-                                    <option value="0">Belum Terverifikasi</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Simpan</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-    @endif
 </body>
 
 </html>
