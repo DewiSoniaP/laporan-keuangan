@@ -37,7 +37,7 @@ Route::get('/forgot-password', function () {
     return view('forgot-password');
 })->name('password.request');
 
-Route::post('/forgot-password', [ForgotPasswordController::class, 'sendWhatsapp'])->name('password.whatsapp');
+Route::post('/forgot-password', [ForgotPasswordController::class, 'sendEmail'])->name('password.email');
 
 Route::get('/reset-password', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset.form');
 

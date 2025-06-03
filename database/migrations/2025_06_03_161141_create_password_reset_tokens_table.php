@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('password_reset_tokens', function (Blueprint $table) {
-            $table->string('whatsapp')->index();   // pakai whatsapp sebagai identitas
+            $table->string('email')->index();   // pakai email sebagai identitas
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });
