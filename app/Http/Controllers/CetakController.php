@@ -204,12 +204,18 @@ class CetakController extends Controller
         $sheet->setCellValue("C$row", $totalDebit - $totalKredit);
 
         // Export ke browser
-        $filename = "Laporan-Keuangan-{$bulan}-{$tahun}.xlsx";
-        $writer = new Xlsx($spreadsheet);
+$filename = "Laporan-Keuangan-{$bulan}-{$tahun}.xlsx";
+$writer = new Xlsx($spreadsheet);
 
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header("Content-Disposition: attachment; filename=\"$filename\"");
-        $writer->save('php://output');
-        exit;
+// Bersihkan output buffer sebelum header
+ob_clean();
+header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+header("Content-Disposition: attachment; filename=\"$filename\"");
+header('Cache-Control: max-age=0');
+
+// Kirim output ke browser
+$writer->save('php://output');
+exit;
+
     }
 }
