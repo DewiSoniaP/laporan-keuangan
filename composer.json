@@ -27,7 +27,8 @@
         "Database\\Factories\\": "database/factories/",
         "Database\\Seeders\\": "database/seeders/",
         "Barryvdh\\DomPDF\\": "vendor/barryvdh/laravel-dompdf/src/",
-        "PhpOffice\\PhpSpreadsheet\\": "vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/"
+        "PhpOffice\\PhpSpreadsheet\\": "vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/",
+        "ZipStream\\": "vendor/maennchen/zipstream-php/src/"
     }
 },
     "autoload-dev": {
