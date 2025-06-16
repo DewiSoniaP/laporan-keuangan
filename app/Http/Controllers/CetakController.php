@@ -7,6 +7,8 @@ use App\Models\Pendapatan;
 use App\Models\Pengeluaran;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class CetakController extends Controller
 {
@@ -88,7 +90,6 @@ class CetakController extends Controller
         return $pdf->stream("Laporan-Keuangan-{$bulan}-{$tahun}.pdf");
     }
 
-    // Detail preview method
     public function detailData(Request $request)
     {
         $type = $request->input('type');
@@ -127,5 +128,88 @@ class CetakController extends Controller
         }
 
         return response()->json(['error' => 'Tipe data tidak valid'], 400);
+    }
+
+    // ✅ Fungsi Baru: Cetak Excel
+    public function cetakExcel(Request $request)
+    {
+        $bulan = $request->input('bulan') ?? date('m');
+        $tahun = $request->input('tahun') ?? date('Y');
+
+        $startDate = "$tahun-$bulan-01";
+        $endDate = date('Y-m-t', strtotime($startDate));
+
+        $pendapatan = Pendapatan::where('is_verified', 1)
+            ->whereBetween('tanggal', [$startDate, $endDate])
+            ->get();
+
+        $pengeluaran = Pengeluaran::where('is_verified', 1)
+            ->whereBetween('tanggal', [$startDate, $endDate])
+            ->get();
+
+        $semuaData = [];
+
+        foreach ($pendapatan as $p) {
+            $semuaData[] = [
+                'tanggal' => $p->tanggal,
+                'keterangan' => $p->diagnose . ' (' . $p->jenisKunjungan . ')',
+                'debit' => $p->jasa,
+                'kredit' => null
+            ];
+        }
+
+        foreach ($pengeluaran as $e) {
+            $semuaData[] = [
+                'tanggal' => $e->tanggal,
+                'keterangan' => $e->keterangan,
+                'debit' => null,
+                'kredit' => $e->jumlahPengeluaran
+            ];
+        }
+
+        usort($semuaData, fn($a, $b) => strtotime($a['tanggal']) <=> strtotime($b['tanggal']));
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Header
+        $sheet->setCellValue('A1', 'Tanggal');
+        $sheet->setCellValue('B1', 'Keterangan');
+        $sheet->setCellValue('C1', 'Debit (Rp)');
+        $sheet->setCellValue('D1', 'Kredit (Rp)');
+
+        // Isi data
+        $row = 2;
+        $totalDebit = 0;
+        $totalKredit = 0;
+
+        foreach ($semuaData as $data) {
+            $sheet->setCellValue("A$row", Carbon::parse($data['tanggal'])->format('d/m/Y'));
+            $sheet->setCellValue("B$row", $data['keterangan']);
+            $sheet->setCellValue("C$row", $data['debit']);
+            $sheet->setCellValue("D$row", $data['kredit']);
+
+            $totalDebit += $data['debit'] ?? 0;
+            $totalKredit += $data['kredit'] ?? 0;
+
+            $row++;
+        }
+
+        // Total dan saldo akhir
+        $sheet->setCellValue("B$row", 'Total');
+        $sheet->setCellValue("C$row", $totalDebit);
+        $sheet->setCellValue("D$row", $totalKredit);
+        $row++;
+        $sheet->setCellValue("B$row", 'Saldo Akhir');
+        $sheet->setCellValue("C$row", $totalDebit - $totalKredit);
+
+        // Export ke browser
+        $filename = "Laporan-Keuangan-{$bulan}-{$tahun}.xlsx";
+        $writer = new Xlsx($spreadsheet);
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header("Content-Disposition: attachment; filename=\"$filename\"");
+        $writer->save('php://output');
+        exit;
     }
 }

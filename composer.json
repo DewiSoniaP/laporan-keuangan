@@ -26,7 +26,8 @@
         "App\\": "app/",
         "Database\\Factories\\": "database/factories/",
         "Database\\Seeders\\": "database/seeders/",
-        "Barryvdh\\DomPDF\\": "vendor/barryvdh/laravel-dompdf/src/"
+        "Barryvdh\\DomPDF\\": "vendor/barryvdh/laravel-dompdf/src/",
+        "PhpOffice\\PhpSpreadsheet\\": "vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/"
     }
 },
     "autoload-dev": {

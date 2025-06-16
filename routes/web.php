@@ -55,7 +55,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/cetak', [CetakController::class, 'index'])->name('cetak.index');
     Route::get('/cetak/pdf', [CetakController::class, 'cetakPDF'])->name('cetak.pdf');
     Route::get('/cetak/detail-data', [CetakController::class, 'detailData'])->name('cetak.detailData');
-    
+    Route::get('/cetak/excel', [CetakController::class, 'cetakExcel'])->name('cetak.excel');
+
     // Pendapatan
     Route::get('/pendapatan', [PendapatanController::class, 'index'])->name('pendapatan.index');
 
