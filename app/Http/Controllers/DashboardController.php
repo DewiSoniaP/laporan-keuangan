@@ -18,6 +18,7 @@ class DashboardController extends Controller
         $pengeluaran = 0;
         $chartData = [];
         $trendDiagnose = [];
+        $trendPengeluaran = [];
 
         if ($bulan && $tahun) {
             // Hitung total pendapatan dari kolom `jasa`
@@ -59,9 +60,25 @@ class DashboardController extends Controller
                 ->orderByDesc('total')
                 ->limit(5)
                 ->get();
+
+            // Ambil trend pengeluaran terbesar berdasarkan keterangan
+            $trendPengeluaran = DB::table('pengeluaran')
+                ->select('keterangan', DB::raw('SUM(jumlahPengeluaran) as total'))
+                ->whereMonth('tanggal', $bulan)
+                ->whereYear('tanggal', $tahun)
+                ->groupBy('keterangan')
+                ->orderByDesc('total')
+                ->limit(5)
+                ->get();
         }
 
-        return view('dashboard', compact('pendapatan', 'pengeluaran', 'chartData', 'trendDiagnose'));
+        return view('dashboard', compact(
+            'pendapatan',
+            'pengeluaran',
+            'chartData',
+            'trendDiagnose',
+            'trendPengeluaran'
+        ));
     }
 
     public function statusVerifikasi()

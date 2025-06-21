@@ -5,13 +5,11 @@
     <title>Dashboard - Laporan Keuangan</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        
 body {
     margin: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f0f2f5;
 }
-
 .sidebar {
     width: 100%;
     background: linear-gradient(to bottom, #2f4cdd, #567df4);
@@ -21,13 +19,11 @@ body {
     position: sticky;
     top: 0;
 }
-
 .sidebar h4 {
     font-size: 18px;
     font-weight: 600;
     margin-bottom: 30px;
 }
-
 .sidebar a {
     display: block;
     margin-bottom: 10px;
@@ -38,13 +34,11 @@ body {
     font-weight: 500;
     transition: background 0.3s ease;
 }
-
 .sidebar a:hover,
 .sidebar a.active {
     background-color: rgba(255, 255, 255, 0.2);
     font-weight: bold;
 }
-
 .topbar {
     background-color: #fff;
     padding: 15px 30px;
@@ -53,37 +47,30 @@ body {
     top: 0;
     z-index: 999;
 }
-
 .content {
     padding: 30px;
 }
-
 .card {
     border: none;
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
-
 .card-blue {
     background-color: #007bff;
     color: white;
 }
-
 .card-red {
     background-color: #dc3545;
     color: white;
 }
-
 .btn-yellow {
     background-color: #ffc107;
     color: black;
     border: none;
 }
-
 .alert {
     border-radius: 8px;
 }
-
 @media (max-width: 768px) {
     .sidebar {
         position: static;
@@ -107,10 +94,10 @@ body {
         <div class="col-md-2">
             <div class="sidebar">
                 <h4>Laporan Keuangan</h4>
-                <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">Dashboard</a>
-                <a href="{{ route('pendapatan.index') }}" class="{{ request()->routeIs('pendapatan.index') ? 'active' : '' }}">Pendapatan</a>
-                <a href="{{ route('pengeluaran.index') }}" class="{{ request()->routeIs('pengeluaran.index') ? 'active' : '' }}">Pengeluaran</a>
-                <a href="{{ route('datakaryawan.index') }}" class="{{ request()->routeIs('datakaryawan.index') ? 'active' : '' }}">Data Karyawan</a>
+                <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">📊 Dashboard</a>
+                <a href="{{ route('pendapatan.index') }}" class="{{ request()->routeIs('pendapatan.index') ? 'active' : '' }}">📈 Pendapatan</a>
+                <a href="{{ route('pengeluaran.index') }}" class="{{ request()->routeIs('pengeluaran.index') ? 'active' : '' }}">📉 Pengeluaran</a>
+                <a href="{{ route('datakaryawan.index') }}" class="{{ request()->routeIs('datakaryawan.index') ? 'active' : '' }}">📋 Data Karyawan</a>
             </div>
         </div>
 
@@ -176,10 +163,21 @@ body {
                         </div>
                     </div>
 
-                    @if(isset($trendDiagnose) && count($trendDiagnose) > 0)
-                        <div class="mt-5">
-                            <h5>Trend Jenis Kunjungan Terbanyak</h5>
-                            <canvas id="trendChart" height="120"></canvas>
+                    @if((isset($trendDiagnose) && count($trendDiagnose) > 0) || (isset($trendPengeluaran) && count($trendPengeluaran) > 0))
+                        <div class="row mt-5">
+                            @if(isset($trendDiagnose) && count($trendDiagnose) > 0)
+                                <div class="col-md-6">
+                                    <h5>Trend Jenis Kunjungan Terbanyak</h5>
+                                    <canvas id="trendChart" height="150"></canvas>
+                                </div>
+                            @endif
+
+                            @if(isset($trendPengeluaran) && count($trendPengeluaran) > 0)
+                                <div class="col-md-6">
+                                    <h5>Pengeluaran Terbesar (Berdasarkan Keterangan)</h5>
+                                    <canvas id="pengeluaranChart" height="150"></canvas>
+                                </div>
+                            @endif
                         </div>
                     @endif
                 @else
@@ -196,8 +194,8 @@ body {
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 @if(isset($trendDiagnose) && count($trendDiagnose) > 0)
-    const ctx = document.getElementById('trendChart').getContext('2d');
-    new Chart(ctx, {
+    const ctxDiagnose = document.getElementById('trendChart').getContext('2d');
+    new Chart(ctxDiagnose, {
         type: 'bar',
         data: {
             labels: {!! json_encode($trendDiagnose->pluck('diagnose')) !!},
@@ -215,6 +213,37 @@ body {
                 y: { beginAtZero: true }
             }
         }
+    });
+@endif
+
+@if(isset($trendPengeluaran) && count($trendPengeluaran) > 0)
+    const ctxPengeluaran = document.getElementById('pengeluaranChart').getContext('2d');
+    new Chart(ctxPengeluaran, {
+        type: 'bar',
+        data: {
+            labels: {!! json_encode($trendPengeluaran->pluck('keterangan')) !!},
+            datasets: [{
+                label: 'Jumlah Pengeluaran',
+                data: {!! json_encode($trendPengeluaran->pluck('total')) !!},
+                backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+    responsive: true,
+    scales: {
+        y: { beginAtZero: true },
+        x: {
+            ticks: {
+                maxRotation: 0,
+                minRotation: 0,
+                autoSkip: false
+            }
+        }
+    }
+}
+
     });
 @endif
 </script>
