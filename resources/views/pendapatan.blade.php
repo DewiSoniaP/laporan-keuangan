@@ -161,10 +161,9 @@
                                             @else
                                                 @if (Auth::user()->role === 'validator')
                                                     @if ($item->idPendapatan == $earliestUnverifiedId)
-                                                        <form action="{{ route('pendapatan.validate', $item->idPendapatan) }}" method="POST" class="d-inline">
-                                                            @csrf
-                                                            <button type="submit" class="btn btn-sm btn-warning" onclick="return confirm('Yakin ingin memverifikasi data ini?')">Belum Diverifikasi</button>
-                                                        </form>
+                                                        <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#modalVerify{{ $item->idPendapatan }}">
+                                                            Belum Diverifikasi
+                                                        </button>
                                                     @else
                                                         <span class="badge bg-secondary">Tunggu data sebelumnya diverifikasi</span>
                                                     @endif
@@ -175,9 +174,7 @@
                                         </td>
                                         <td class="text-nowrap">
                                             @if(Auth::user()->role === 'admin')
-                                            <!-- Tombol Edit -->
                                             <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#modalEdit{{ $item->idPendapatan }}">Edit</button>
-                                            <!-- Tombol Hapus -->
                                             <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#modalDelete{{ $item->idPendapatan }}">Hapus</button>
                                             @endif
                                         </td>
@@ -191,7 +188,7 @@
                         </table>
                     </div>
 
-                </div>
+                                    </div>
             </div>
         </div>
     </div>
@@ -240,7 +237,6 @@
                             <label>Jasa</label>
                             <input type="number" name="jasa" class="form-control" placeholder="masukan harga jasa" required>
                         </div>
-                        <!-- Tidak ada input status verifikasi di form input -->
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Simpan</button>
@@ -271,40 +267,38 @@
                             </div>
                             <div class="col-md-6">
                                 <label>Nama Pasien</label>
-                                <input type="text" name="namaPasien" class="form-control" placeholder="masukan nama pasien" value="{{ $item->namaPasien }}" required>
+                                <input type="text" name="namaPasien" class="form-control" value="{{ $item->namaPasien }}" required>
                             </div>
                             <div class="col-md-3">
                                 <label>Usia</label>
-                                <input type="number" name="usia" class="form-control" placeholder="0" value="{{ $item->usia }}" required>
+                                <input type="number" name="usia" class="form-control" value="{{ $item->usia }}" required>
                             </div>
                             <div class="col-md-9">
                                 <label>Nama Keluarga</label>
-                                <input type="text" name="namaKeluarga" class="form-control" placeholder="masukan nama keluarga" value="{{ $item->namaKeluarga }}" required>
+                                <input type="text" name="namaKeluarga" class="form-control" value="{{ $item->namaKeluarga }}" required>
                             </div>
                             <div class="col-md-12">
                                 <label>Alamat</label>
-                                <input type="text" name="alamat" class="form-control" placeholder="masukan nama alamat" value="{{ $item->alamat }}" required>
+                                <input type="text" name="alamat" class="form-control" value="{{ $item->alamat }}" required>
                             </div>
                             <div class="col-md-6">
                                 <label>Diagnosa</label>
-                                <input type="text" name="diagnose" class="form-control" placeholder="masukan hasil diagnose" value="{{ $item->diagnose }}" required>
+                                <input type="text" name="diagnose" class="form-control" value="{{ $item->diagnose }}" required>
                             </div>
                             <div class="col-md-6">
                                 <label>Jenis Kunjungan</label>
-                                <input type="text" name="jenisKunjungan" class="form-control" placeholder="masukan jenis kunjungan" value="{{ $item->jenisKunjungan }}" required>
+                                <input type="text" name="jenisKunjungan" class="form-control" value="{{ $item->jenisKunjungan }}" required>
                             </div>
                             <div class="col-md-6">
                                 <label>Jasa</label>
-                                <input type="number" name="jasa" class="form-control" placeholder="masukan harga jasa" value="{{ $item->jasa }}" required>
+                                <input type="number" name="jasa" class="form-control" value="{{ $item->jasa }}" required>
                             </div>
                             <div class="col-md-6">
                                 <label>Status Verifikasi</label>
-                                <!-- Disabled select for showing status -->
                                 <select name="is_verified_disabled" class="form-control" disabled>
                                     <option value="1" {{ $item->is_verified ? 'selected' : '' }}>Terverifikasi</option>
                                     <option value="0" {{ !$item->is_verified ? 'selected' : '' }}>Belum Terverifikasi</option>
                                 </select>
-                                <!-- Hidden input to submit value -->
                                 <input type="hidden" name="is_verified" value="{{ $item->is_verified ? '1' : '0' }}">
                             </div>
                         </div>
@@ -318,7 +312,7 @@
         @endif
     @endforeach
 
-    {{-- MODAL DELETE --}}
+        {{-- MODAL DELETE --}}
     @foreach ($pendapatan as $item)
         @if(Auth::user()->role === 'admin')
         <div class="modal fade" id="modalDelete{{ $item->idPendapatan }}" tabindex="-1" aria-labelledby="modalDeleteLabel{{ $item->idPendapatan }}" aria-hidden="true">
@@ -346,6 +340,32 @@
         @endif
     @endforeach
 
-</body>
+    {{-- MODAL VALIDASI --}}
+    @foreach ($pendapatan as $item)
+        @if(Auth::user()->role === 'validator' && !$item->is_verified && $item->idPendapatan == $earliestUnverifiedId)
+        <div class="modal fade" id="modalVerify{{ $item->idPendapatan }}" tabindex="-1" aria-labelledby="modalVerifyLabel{{ $item->idPendapatan }}" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-primary">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title" id="modalVerifyLabel{{ $item->idPendapatan }}">Konfirmasi Verifikasi</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                    </div>
+                    <div class="modal-body">
+                        Apakah Anda yakin ingin <strong>memverifikasi</strong> data pendapatan atas nama
+                        <strong>{{ $item->namaPasien }}</strong>?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <form action="{{ route('pendapatan.validate', $item->idPendapatan) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-primary">Ya, Verifikasi</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+    @endforeach
 
+</body>
 </html>

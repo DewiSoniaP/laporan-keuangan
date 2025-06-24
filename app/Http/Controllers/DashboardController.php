@@ -61,15 +61,16 @@ class DashboardController extends Controller
                 ->limit(5)
                 ->get();
 
-            // Ambil trend pengeluaran terbesar berdasarkan keterangan
+            // Ambil trend pengeluaran terbesar berdasarkan keperluan pengeluaran
             $trendPengeluaran = DB::table('pengeluaran')
-                ->select('keterangan', DB::raw('SUM(jumlahPengeluaran) as total'))
-                ->whereMonth('tanggal', $bulan)
-                ->whereYear('tanggal', $tahun)
-                ->groupBy('keterangan')
-                ->orderByDesc('total')
-                ->limit(5)
-                ->get();
+            ->select('keperluanPengeluaran', DB::raw('SUM(jumlahPengeluaran) as total'))
+            ->whereMonth('tanggal', $bulan)
+            ->whereYear('tanggal', $tahun)
+            ->groupBy('keperluanPengeluaran')
+            ->orderByDesc('total')
+            ->limit(5)
+            ->get();
+
         }
 
         return view('dashboard', compact(

@@ -167,14 +167,14 @@ body {
                         <div class="row mt-5">
                             @if(isset($trendDiagnose) && count($trendDiagnose) > 0)
                                 <div class="col-md-6">
-                                    <h5>Trend Jenis Kunjungan Terbanyak</h5>
+                                    <h5>Jenis Kunjungan Terbanyak (Berdasarkan Diagnose)</h5>
                                     <canvas id="trendChart" height="150"></canvas>
                                 </div>
                             @endif
 
                             @if(isset($trendPengeluaran) && count($trendPengeluaran) > 0)
                                 <div class="col-md-6">
-                                    <h5>Pengeluaran Terbesar (Berdasarkan Keterangan)</h5>
+                                    <h5>Pengeluaran Terbesar (Berdasarkan Keperluan)</h5>
                                     <canvas id="pengeluaranChart" height="150"></canvas>
                                 </div>
                             @endif
@@ -221,7 +221,7 @@ body {
     new Chart(ctxPengeluaran, {
         type: 'bar',
         data: {
-            labels: {!! json_encode($trendPengeluaran->pluck('keterangan')) !!},
+            labels: {!! json_encode($trendPengeluaran->pluck('keperluanPengeluaran')) !!},
             datasets: [{
                 label: 'Jumlah Pengeluaran',
                 data: {!! json_encode($trendPengeluaran->pluck('total')) !!},

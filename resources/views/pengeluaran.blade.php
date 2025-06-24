@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Halaman Pengeluaran</title>
-    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -153,12 +152,9 @@
                                         @else
                                             @if (Auth::user()->role === 'validator')
                                                 @if ($item->idPengeluaran == $earliestUnverifiedId)
-                                                    <form action="{{ route('pengeluaran.validate', $item->idPengeluaran) }}" method="POST" class="d-inline">
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-sm btn-warning" onclick="return confirm('Yakin ingin memverifikasi data ini?')">
-                                                            Belum Diverifikasi
-                                                        </button>
-                                                    </form>
+                                                    <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#modalVerify{{ $item->idPengeluaran }}">
+                                                        Belum Diverifikasi
+                                                    </button>
                                                 @else
                                                     <span class="badge bg-secondary">Tunggu data sebelumnya diverifikasi</span>
                                                 @endif
@@ -169,14 +165,10 @@
                                     </td>
                                     <td class="text-nowrap">
                                         @if(Auth::user()->role === 'admin')
-                                        <!-- Tombol Edit -->
                                         <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal"
                                             data-bs-target="#modalEdit{{ $item->idPengeluaran }}">Edit</button>
-                                        <!-- Tombol Hapus -->
                                         <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal"
-                                            data-bs-target="#modalDelete{{ $item->idPengeluaran }}">
-                                            Hapus
-                                        </button>
+                                            data-bs-target="#modalDelete{{ $item->idPengeluaran }}">Hapus</button>
                                         @endif
                                     </td>
                                 </tr>
@@ -188,8 +180,7 @@
                             </tbody>
                         </table>
                     </div>
-
-                </div>
+                 </div>
             </div>
         </div>
     </div>
@@ -265,12 +256,10 @@
                             </div>
                             <div class="col-md-6">
                                 <label>Status Verifikasi</label>
-                                <!-- Disabled select for showing status -->
                                 <select name="is_verified_disabled" class="form-control" disabled>
                                     <option value="1" {{ $item->is_verified ? 'selected' : '' }}>Terverifikasi</option>
                                     <option value="0" {{ !$item->is_verified ? 'selected' : '' }}>Belum Terverifikasi</option>
                                 </select>
-                                <!-- Hidden input to submit value -->
                                 <input type="hidden" name="is_verified" value="{{ $item->is_verified ? '1' : '0' }}">
                             </div>
                         </div>
@@ -284,7 +273,34 @@
         @endif
     @endforeach
 
-    {{-- MODAL DELETE --}}
+    {{-- MODAL VALIDASI --}}
+    @foreach ($pengeluaran as $item)
+        @if(Auth::user()->role === 'validator' && !$item->is_verified && $item->idPengeluaran == $earliestUnverifiedId)
+        <div class="modal fade" id="modalVerify{{ $item->idPengeluaran }}" tabindex="-1" aria-labelledby="modalVerifyLabel{{ $item->idPengeluaran }}" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-primary">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title" id="modalVerifyLabel{{ $item->idPengeluaran }}">Konfirmasi Verifikasi</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                    </div>
+                    <div class="modal-body">
+                        Apakah Anda yakin ingin <strong>memverifikasi</strong> data pengeluaran untuk keperluan
+                        <strong>{{ $item->keperluanPengeluaran }}</strong>?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <form action="{{ route('pengeluaran.validate', $item->idPengeluaran) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-primary">Ya, Verifikasi</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+    @endforeach
+
+        {{-- MODAL DELETE --}}
     @foreach ($pengeluaran as $item)
         @if(Auth::user()->role === 'admin')
         <div class="modal fade" id="modalDelete{{ $item->idPengeluaran }}" tabindex="-1" aria-labelledby="modalDeleteLabel{{ $item->idPengeluaran }}" aria-hidden="true">
@@ -311,6 +327,6 @@
         </div>
         @endif
     @endforeach
-</body>
 
+</body>
 </html>

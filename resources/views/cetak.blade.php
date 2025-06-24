@@ -83,7 +83,7 @@
                     $semuaData[] = [
                         'id' => $e->idPengeluaran,
                         'tanggal' => $e->tanggal,
-                        'keterangan' => $e->keterangan,
+                        'keterangan' => $e->keperluanPengeluaran,
                         'debit' => null,
                         'kredit' => $e->jumlahPengeluaran,
                         'type' => 'pengeluaran'

@@ -61,7 +61,7 @@ class CetakController extends Controller
         foreach ($pengeluaran as $e) {
             $semuaData[] = [
                 'tanggal' => $e->tanggal,
-                'keterangan' => $e->keterangan,
+                'keterangan' => $e->keperluanPengeluaran,
                 'debit' => null,
                 'kredit' => $e->jumlahPengeluaran
             ];
@@ -160,7 +160,7 @@ class CetakController extends Controller
         foreach ($pengeluaran as $e) {
             $semuaData[] = [
                 'tanggal' => $e->tanggal,
-                'keterangan' => $e->keterangan,
+                'keterangan' => $e->keperluanPengeluaran,
                 'debit' => null,
                 'kredit' => $e->jumlahPengeluaran
             ];
